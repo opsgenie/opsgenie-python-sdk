@@ -1,1 +1,0 @@
-# opsgenie-python-sdk
