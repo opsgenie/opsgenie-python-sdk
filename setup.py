@@ -1,16 +1,13 @@
-import io
+import os
 import sys
 
-from setuptools import find_packages
 from setuptools import setup
-from setuptools.command.test import test as TestCommand
-
-import opsgenie
+from setuptools.command.test import test
 
 
-class Tox(TestCommand):
+class Tox(test):
     def finalize_options(self):
-        TestCommand.finalize_options(self)
+        test.finalize_options(self)
         self.test_args = []
         self.test_suite = True
 
@@ -19,24 +16,14 @@ class Tox(TestCommand):
         errcode = tox.cmdline(self.test_args)
         sys.exit(errcode)
 
-
-def read(*filenames, **kwargs):
-    encoding = kwargs.get('encoding', 'utf-8')
-    sep = kwargs.get('sep', '\n')
-    buf = []
-    for filename in filenames:
-        with io.open(filename, encoding=encoding) as f:
-            buf.append(f.read())
-    return sep.join(buf)
-
-
-long_description = read('README.rst')
+long_description = open(
+    os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 
 setup(
     name='opsgenie-sdk',
-    version=opsgenie.__version__,
-    package_dir={'': 'opsgenie'},
-    packages=find_packages('opsgenie'),
+    version='0.1.1',
+    packages=['opsgenie', 'opsgenie.alert', 'opsgenie.heartbeat', 'opsgenie.integration', 'opsgenie.policy',
+              'opsgenie.tests'],
     install_requires=['requests', 'pytz'],
     tests_require=['tox', 'nose2', 'httpretty'],
     cmdclass={'test': Tox},

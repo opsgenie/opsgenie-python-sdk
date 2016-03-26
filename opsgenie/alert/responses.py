@@ -1,4 +1,4 @@
-from ..core.response import BaseResponse
+from opsgenie.response import BaseResponse
 
 
 class GetAlertResponse(BaseResponse):

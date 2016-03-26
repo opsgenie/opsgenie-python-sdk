@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from opsgenie.core.config import Configuration, HttpConfiguration
+from opsgenie.config import Configuration, HttpConfiguration
 
 
 class TestConfiguration(TestCase):

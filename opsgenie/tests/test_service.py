@@ -2,10 +2,15 @@ import json
 from unittest import TestCase
 
 import httpretty
+from requests import Response
 from requests.exceptions import RetryError
+from requests.packages.urllib3 import Retry
 
-from opsgenie.alert.alert_requests import GetAlertRequest
-from opsgenie.core.service import *
+from opsgenie.alert.requests import GetAlertRequest
+from opsgenie.config import ProxyConfiguration, HttpConfiguration
+from opsgenie.errors import ServerError
+from opsgenie.service import generate_params, generate_proxy, generate_timeout_and_retry, execute_http_call, \
+    handle_error
 
 
 class TestService(TestCase):

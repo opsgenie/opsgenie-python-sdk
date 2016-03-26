@@ -1,8 +1,8 @@
-from opsgenie.alert.alert_requests import *
-from opsgenie.core.config import Configuration
-from opsgenie.core.errors import OpsGenieError
-from opsgenie.core.client import OpsGenie
-from . import random_str
+from opsgenie import OpsGenie
+from opsgenie.alert.requests import *
+from opsgenie.config import Configuration
+from opsgenie.errors import OpsGenieError
+from samples import random_str
 
 API_KEY = "YOUR_API_KEY"
 TEAM_NAME = "YOUR_TEAM_NAME"

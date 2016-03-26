@@ -1,4 +1,4 @@
-from .errors import InvalidRequestError
+from errors import InvalidRequestError
 
 
 def required(attr):

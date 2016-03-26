@@ -1,7 +1,7 @@
 import json
 from unittest import TestCase
 
-from opsgenie.core.response import BaseResponse
+from opsgenie.response import BaseResponse
 
 
 class TestResponse(TestCase):

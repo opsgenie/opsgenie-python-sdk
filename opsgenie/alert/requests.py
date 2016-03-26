@@ -1,5 +1,5 @@
-from ..core.request import BaseRequest, max_value, required, required_one_of, should_be_one_of
-from ..core.utility import list_to_str, format_date
+from opsgenie.request import BaseRequest, required_one_of, should_be_one_of, max_value, required
+from opsgenie.utility import list_to_str, format_date
 
 
 class GetAlertRequest(BaseRequest):

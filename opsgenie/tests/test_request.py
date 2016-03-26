@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from opsgenie.core.request import *
+from opsgenie.errors import InvalidRequestError
+from opsgenie.request import BaseRequest, required, required_one_of, should_be_one_of, max_value
 
 
 class TestRequest(TestCase):

@@ -3,9 +3,9 @@ from requests import Response
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util import Retry
 
-from .config import ProxyConfiguration, HttpConfiguration
-from .errors import ServerError
-from .request import BaseRequest
+from config import ProxyConfiguration, HttpConfiguration
+from errors import ServerError
+from request import BaseRequest
 
 
 def generate_params(api_key, request):

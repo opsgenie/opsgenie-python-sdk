@@ -1,5 +1,5 @@
-from ..alert.alert_service import AlertService
-from .config import Configuration
+from config import Configuration
+from alert.service import AlertService
 
 
 class OpsGenie:

@@ -1,6 +1,6 @@
-from .alert_requests import *
-from .alert_responses import *
-from ..core.service import BaseService, execute
+from requests import *
+from responses import *
+from opsgenie.service import BaseService, execute
 
 
 class AlertService(BaseService):

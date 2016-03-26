@@ -46,11 +46,10 @@ OpsGenie client and make a create alert request.
 
 ::
 
-    import logging
-    from opsgenie.alert.alert_requests import *
-    from opsgenie.core.config import Configuration
-    from opsgenie.core.errors import OpsGenieError
-    from opsgenie.core.client import OpsGenie
+    from opsgenie import OpsGenie
+    from opsgenie.alert.requests import CreateAlertRequest
+    from opsgenie.config import Configuration
+    from opsgenie.errors import OpsGenieError
 
     config = Configuration("YOUR_API_KEY")
 
