@@ -21,7 +21,7 @@ long_description = open(
 
 setup(
     name='opsgenie-sdk',
-    version='0.1.1',
+    version='0.1.2',
     packages=['opsgenie', 'opsgenie.alert', 'opsgenie.heartbeat', 'opsgenie.integration', 'opsgenie.policy',
               'opsgenie.tests'],
     install_requires=['requests', 'pytz'],
