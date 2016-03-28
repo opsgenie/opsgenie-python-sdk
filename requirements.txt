@@ -1,4 +1,2 @@
 requests>=2.9.1
-httpretty>=0.8.14
-nose2>=0.6.4
 pytz>=2016.1

@@ -1,9 +1,8 @@
-from unittest import TestCase
-
 from opsgenie.config import Configuration, HttpConfiguration
+from opsgenie.tests import OpsGenieTestCase
 
 
-class TestConfiguration(TestCase):
+class TestConfiguration(OpsGenieTestCase):
     def test_config(self):
         configuration = Configuration(apikey="API_KEY",
                                       http_config=HttpConfiguration(connect_timeout=20),

@@ -16,7 +16,7 @@ def required(attr):
     def wrapper(func):
         def validate(self):
             if getattr(self, attr, None) is None:
-                raise InvalidRequestError("'{}' property is required.".format(attr))
+                raise InvalidRequestError("'{0}' property is required.".format(attr))
             return func(self)
 
         return validate
@@ -44,9 +44,9 @@ def required_one_of(attrs):
                 if attr_value is not None and attr_value is not '':
                     attr_count += 1
             if attr_count > 1:
-                raise InvalidRequestError("Specify only one of '{}' properties.".format(attrs))
+                raise InvalidRequestError("Specify only one of '{0}' properties.".format(attrs))
             elif attr_count == 0:
-                raise InvalidRequestError("One of '{}' properties is required.".format(attrs))
+                raise InvalidRequestError("One of '{0}' properties is required.".format(attrs))
 
             return func(self)
 

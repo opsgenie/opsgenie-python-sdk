@@ -1,12 +1,12 @@
 from datetime import datetime
-from unittest import TestCase
 
 import pytz
 
+from opsgenie.tests import OpsGenieTestCase
 from opsgenie.utility import format_date, list_to_str
 
 
-class TestUtility(TestCase):
+class TestUtility(OpsGenieTestCase):
     def test_format_date(self):
         dt = None
         formatted_date = format_date(dt)

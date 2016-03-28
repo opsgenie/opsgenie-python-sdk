@@ -39,15 +39,15 @@ def generate_proxy(proxy_config):
     proxy = None
     if proxy_config:
         if proxy_config.username:
-            proxy = {proxy_config.protocol: '{}://{}:{}@{}:{}'.format(proxy_config.protocol,
-                                                                      proxy_config.username,
-                                                                      proxy_config.password,
-                                                                      proxy_config.host,
-                                                                      proxy_config.port)}
+            proxy = {proxy_config.protocol: '{0}://{1}:{2}@{3}:{4}'.format(proxy_config.protocol,
+                                                                           proxy_config.username,
+                                                                           proxy_config.password,
+                                                                           proxy_config.host,
+                                                                           proxy_config.port)}
         else:
-            proxy = {proxy_config.protocol: '{}://{}:{}'.format(proxy_config.protocol,
-                                                                proxy_config.host,
-                                                                proxy_config.port)}
+            proxy = {proxy_config.protocol: '{0}://{1}:{2}'.format(proxy_config.protocol,
+                                                                   proxy_config.host,
+                                                                   proxy_config.port)}
 
     return proxy
 

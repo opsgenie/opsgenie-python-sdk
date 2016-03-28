@@ -1,10 +1,10 @@
 import json
-from unittest import TestCase
 
 from opsgenie.response import BaseResponse
+from opsgenie.tests import OpsGenieTestCase
 
 
-class TestResponse(TestCase):
+class TestResponse(OpsGenieTestCase):
     def test_response_from_json(self):
         class Response(BaseResponse):
             def __init__(self, json_str):

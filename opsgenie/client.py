@@ -1,5 +1,5 @@
-from config import Configuration
 from alert.service import AlertService
+from config import Configuration
 
 
 class OpsGenie:

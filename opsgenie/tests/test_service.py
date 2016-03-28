@@ -1,5 +1,4 @@
 import json
-from unittest import TestCase
 
 import httpretty
 from requests import Response
@@ -11,9 +10,10 @@ from opsgenie.config import ProxyConfiguration, HttpConfiguration
 from opsgenie.errors import ServerError
 from opsgenie.service import generate_params, generate_proxy, generate_timeout_and_retry, execute_http_call, \
     handle_error
+from opsgenie.tests import OpsGenieTestCase
 
 
-class TestService(TestCase):
+class TestService(OpsGenieTestCase):
     def test_generating_params(self):
         request = GetAlertRequest(alias="Alias")
         params = generate_params("API_KEY", request)

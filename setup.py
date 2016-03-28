@@ -19,13 +19,20 @@ class Tox(test):
 long_description = open(
     os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 
+with open('requirements.txt') as f:
+    install_requires = f.read().splitlines()
+
+
+with open('test-requirements.txt') as f:
+    test_requires = f.read().splitlines()
+
 setup(
     name='opsgenie-sdk',
     version='0.1.2',
     packages=['opsgenie', 'opsgenie.alert', 'opsgenie.heartbeat', 'opsgenie.integration', 'opsgenie.policy',
               'opsgenie.tests'],
-    install_requires=['requests', 'pytz'],
-    tests_require=['tox', 'nose2', 'httpretty'],
+    install_requires=install_requires,
+    tests_require=test_requires,
     cmdclass={'test': Tox},
     url='https://github.com/opsgenie/opsgenie-python-sdk',
     license='Apache License 2.0',

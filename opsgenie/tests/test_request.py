@@ -1,10 +1,9 @@
-from unittest import TestCase
-
 from opsgenie.errors import InvalidRequestError
 from opsgenie.request import BaseRequest, required, required_one_of, should_be_one_of, max_value
+from opsgenie.tests import OpsGenieTestCase
 
 
-class TestRequest(TestCase):
+class TestRequest(OpsGenieTestCase):
     def test_request_from_json(self):
         class Request(BaseRequest):
             def __init__(self, id=None, alias=None, tiny_id=None, order_by=None, count=None, text=None, details=None):
