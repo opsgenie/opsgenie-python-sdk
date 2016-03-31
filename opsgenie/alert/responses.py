@@ -1,4 +1,5 @@
 from opsgenie.response import BaseResponse
+from opsgenie.utility import convert_to_date
 
 
 class GetAlertResponse(BaseResponse):
@@ -13,12 +14,12 @@ class GetAlertResponse(BaseResponse):
         self.alias = self.pop('alias')
         self.entity = self.pop('entity')
         self.id = self.pop('id')
-        self.updated_at = self.pop('updatedAt')
+        self.updated_at = convert_to_date(self.pop('updatedAt'))
         self.message = self.pop('message')
         self.details = self.pop('details')
         self.source = self.pop('source')
         self.description = self.pop('description')
-        self.created_at = self.pop('createdAt')
+        self.created_at = convert_to_date(self.pop('createdAt'))
         self.is_seen = self.pop('isSeen')
         self.acknowledged = self.pop('acknowledged')
         self.owner = self.pop('owner')
@@ -37,8 +38,8 @@ class ListAlertsResponse(BaseResponse):
             self.status = kwargs.get('status')
             self.is_seen = kwargs.get('isSeen')
             self.acknowledged = kwargs.get('acknowledged')
-            self.created_at = kwargs.get('createdAt')
-            self.updated_at = kwargs.get('updatedAt')
+            self.created_at = convert_to_date(kwargs.get('createdAt'))
+            self.updated_at = convert_to_date(kwargs.get('updatedAt'))
             self.tiny_id = kwargs.get('tinyId')
             self.owner = kwargs.get('owner')
 
@@ -57,7 +58,7 @@ class ListAlertLogsResponse(BaseResponse):
             self.log = kwargs.get('log')
             self.log_type = kwargs.get('logType')
             self.owner = kwargs.get('owner')
-            self.created_at = kwargs.get('createdAt')
+            self.created_at = convert_to_date(kwargs.get('createdAt'))
 
     def __init__(self, json_str):
         BaseResponse.__init__(self, json_str)
@@ -75,7 +76,7 @@ class ListAlertNotesResponse(BaseResponse):
         def __init__(self, **kwargs):
             self.note = kwargs.get('note')
             self.owner = kwargs.get('owner')
-            self.created_at = kwargs.get('createdAt')
+            self.created_at = convert_to_date(kwargs.get('createdAt'))
 
     def __init__(self, json_str):
         BaseResponse.__init__(self, json_str)
@@ -94,14 +95,14 @@ class ListAlertRecipientsResponse(BaseResponse):
             self.username = kwargs.get('username')
             self.state = kwargs.get('state')
             self.method = kwargs.get('method')
-            self.state_changed_at = kwargs.get('stateChangedAt')
+            self.state_changed_at = convert_to_date(kwargs.get('stateChangedAt'))
 
     class GroupResponse:
         def __init__(self, **kwargs):
             self.username = kwargs.get('username')
             self.state = kwargs.get('state')
             self.method = kwargs.get('method')
-            self.state_changed_at = kwargs.get('stateChangedAt')
+            self.state_changed_at = convert_to_date(kwargs.get('stateChangedAt'))
 
     def __init__(self, json_str):
         BaseResponse.__init__(self, json_str)

@@ -1,3 +1,6 @@
+import platform
+
+import pkg_resources
 import requests
 from requests import Response
 from requests.adapters import HTTPAdapter
@@ -70,6 +73,13 @@ def generate_timeout_and_retry(http_config):
     return timeout, retry
 
 
+def generate_user_agent():
+    version = pkg_resources.require("opsgenie-sdk")[0].version
+    return "opsgenie-python-sdk/{0}; {1}/{2}; {3}".format(version,
+                                                          platform.system(), platform.release(),
+                                                          platform.python_version())
+
+
 def execute_http_call(method, url, params, retry, timeout, proxy, attachment=None):
     """
     Executes http call using requests library
@@ -90,6 +100,7 @@ def execute_http_call(method, url, params, retry, timeout, proxy, attachment=Non
     session = requests.session()
     session.mount('http://', HTTPAdapter(max_retries=retry))  # Documented in HTTPAdapter
     session.mount('https://', HTTPAdapter(max_retries=retry))  # Documented in HTTPAdapter
+    session.headers = {'User-Agent': generate_user_agent()}
     if method is "GET":
         response = session.get(url, params=params, proxies=proxy, timeout=timeout)
     elif method is "DELETE":

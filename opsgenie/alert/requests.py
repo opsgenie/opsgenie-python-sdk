@@ -1,5 +1,5 @@
 from opsgenie.request import BaseRequest, required_one_of, should_be_one_of, max_value, required
-from opsgenie.utility import list_to_str, format_date
+from opsgenie.utility import list_to_str, format_date, convert_from_date
 
 
 class GetAlertRequest(BaseRequest):
@@ -45,13 +45,13 @@ class ListAlertsRequest(BaseRequest):
 
         Parameters
         ----------
-        created_after : long, optional
-            Unix timestamp in nanoseconds. Filter alerts created after specified time.
-        created_before : long, optional
+        created_after : datetime, optional
+            UTC datetime. Filter alerts created after specified time.
+        created_before : datetime, optional
             Unix timestamp in nanoseconds. Filter alerts created before specified time.
-        updated_after : long, optional
+        updated_after : datetime, optional
             Unix timestamp in nanoseconds. Filter alerts updated after specified time.
-        updated_before : long, optional
+        updated_before : datetime, optional
             Unix timestamp in nanoseconds. Filter alerts updated before specified time.
         limit : int, optional
             Page size. (Default is 20, Max is 100)
@@ -88,10 +88,10 @@ class ListAlertsRequest(BaseRequest):
 
     def decode(self):
         return {
-            'createdAfter': self.created_after,
-            'createdBefore': self.created_before,
-            'updatedAfter': self.updated_after,
-            'updatedBefore': self.updated_before,
+            'createdAfter': convert_from_date(self.created_after),
+            'createdBefore': convert_from_date(self.created_before),
+            'updatedAfter': convert_from_date(self.updated_after),
+            'updatedBefore': convert_from_date(self.updated_before),
             'limit': self.limit,
             'status': self.status,
             'sortBy': self.sort_by,
@@ -374,13 +374,13 @@ class CountAlertsRequest(BaseRequest):
 
         Parameters
         ----------
-        created_after : long, optional
-            Unix timestamp in nanoseconds. Filter alerts created after specified time.
-        created_before : long, optional
+        created_after : datetime, optional
+            UTC datetime. Filter alerts created after specified time.
+        created_before : datetime, optional
             Unix timestamp in nanoseconds. Filter alerts created before specified time.
-        updated_after : long, optional
+        updated_after : datetime, optional
             Unix timestamp in nanoseconds. Filter alerts updated after specified time.
-        updated_before : long, optional
+        updated_before : datetime, optional
             Unix timestamp in nanoseconds. Filter alerts updated before specified time.
         limit : int, optional
             Page size. (Default is 20, Max is 100)
@@ -408,10 +408,10 @@ class CountAlertsRequest(BaseRequest):
 
     def decode(self):
         return {
-            'createdAfter': self.created_after,
-            'createdBefore': self.created_before,
-            'updatedAfter': self.updated_after,
-            'updatedBefore': self.updated_before,
+            'createdAfter': convert_from_date(self.created_after),
+            'createdBefore': convert_from_date(self.created_before),
+            'updatedAfter': convert_from_date(self.updated_after),
+            'updatedBefore': convert_from_date(self.updated_before),
             'limit': self.limit,
             'status': self.status,
             'tags': list_to_str(self.tags),
