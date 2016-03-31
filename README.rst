@@ -1,4 +1,4 @@
-OpsGenie Python SDK
+OpsGenie Python SDK - [BETA]
 ===================
 
 Aim and Scope
