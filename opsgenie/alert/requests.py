@@ -48,11 +48,11 @@ class ListAlertsRequest(BaseRequest):
         created_after : datetime, optional
             UTC datetime. Filter alerts created after specified time.
         created_before : datetime, optional
-            Unix timestamp in nanoseconds. Filter alerts created before specified time.
+            UTC datetime. Filter alerts created before specified time.
         updated_after : datetime, optional
-            Unix timestamp in nanoseconds. Filter alerts updated after specified time.
+            UTC datetime. Filter alerts updated after specified time.
         updated_before : datetime, optional
-            Unix timestamp in nanoseconds. Filter alerts updated before specified time.
+            UTC datetime. Filter alerts updated before specified time.
         limit : int, optional
             Page size. (Default is 20, Max is 100)
         status : {'open', 'acked', 'unacked', 'seen', 'notseen', 'closed'}
@@ -377,11 +377,11 @@ class CountAlertsRequest(BaseRequest):
         created_after : datetime, optional
             UTC datetime. Filter alerts created after specified time.
         created_before : datetime, optional
-            Unix timestamp in nanoseconds. Filter alerts created before specified time.
+            UTC datetime. Filter alerts created before specified time.
         updated_after : datetime, optional
-            Unix timestamp in nanoseconds. Filter alerts updated after specified time.
+            UTC datetime. Filter alerts updated after specified time.
         updated_before : datetime, optional
-            Unix timestamp in nanoseconds. Filter alerts updated before specified time.
+            UTC datetime. Filter alerts updated before specified time.
         limit : int, optional
             Page size. (Default is 20, Max is 100)
         status : {'open', 'acked', 'unacked', 'seen', 'notseen', 'closed'}
