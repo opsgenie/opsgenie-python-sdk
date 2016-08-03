@@ -81,7 +81,7 @@ class ListAlertsRequest(BaseRequest):
     @max_value("limit", 100)
     @should_be_one_of("status", ["open", "acked", "unacked", "seen", "notseen", "closed"])
     @should_be_one_of("sort_by", ["createdAt", "updatedAt"])
-    @should_be_one_of("order", ["asc", "dsc"])
+    @should_be_one_of("order", ["asc", "desc"])
     @should_be_one_of("tags_operator", ["and", "or"])
     def validate(self):
         pass
@@ -130,7 +130,7 @@ class ListAlertLogsRequest(BaseRequest):
         self.last_key = last_key
 
     @required_one_of(["id", "alias"])
-    @should_be_one_of("order", ["asc", "dsc"])
+    @should_be_one_of("order", ["asc", "desc"])
     def validate(self):
         pass
 
@@ -173,7 +173,7 @@ class ListAlertNotesRequest(BaseRequest):
         self.last_key = last_key
 
     @required_one_of(["id", "alias"])
-    @should_be_one_of("order", ["asc", "dsc"])
+    @should_be_one_of("order", ["asc", "desc"])
     def validate(self):
         pass
 
