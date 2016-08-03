@@ -1,4 +1,4 @@
-from errors import ApiKeyMissingError, EndpointMissingError, InvalidConfigurationError
+from .errors import ApiKeyMissingError, EndpointMissingError, InvalidConfigurationError
 
 
 class Configuration:

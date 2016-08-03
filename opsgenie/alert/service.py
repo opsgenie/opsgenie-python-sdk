@@ -1,5 +1,5 @@
 from opsgenie.service import BaseService, execute
-from responses import *
+from .responses import *
 
 
 class AlertService(BaseService):

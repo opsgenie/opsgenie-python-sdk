@@ -335,7 +335,7 @@ def alert_create_listalerts():
         print "[ERROR]", err.message
 
 
-# alert_create_acknowledge()
+alert_create_acknowledge()
 # alert_create_addnote_listnotes()
 # alert_create_addrecipient()
 # alert_create_addtags()

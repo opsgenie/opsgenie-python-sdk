@@ -1,1 +1,1 @@
-from client import OpsGenie
+from .client import OpsGenie
