@@ -1,4 +1,5 @@
 from .errors import InvalidRequestError
+from six import string_types
 
 
 def required(attr):
@@ -103,7 +104,7 @@ def max_value(attr, value):
                     raise InvalidRequestError(
                         "'{0}' property should be lower than '{1}'. Current value: '{2}'.".format(attr, value,
                                                                                                   attr_val))
-                elif isinstance(attr_val, basestring) and len(attr_val) > value:
+                elif isinstance(attr_val, string_types) and len(attr_val) > value:
                     raise InvalidRequestError(
                         "'{0}' property should be lower than '{1}' characters. Current value: '{2}', len'{3}'.".format(
                             attr,

@@ -13,7 +13,7 @@ class TestRequest(OpsGenieTestCase):
                 ----------
                 id : str
                 alias : str
-                tiny_id : basestring
+                tiny_id : six.string_types
                 order_by
                 count
                 text
