@@ -12,15 +12,15 @@ class TestUtility(OpsGenieTestCase):
         formatted_date = format_date(dt)
         self.assertEqual(None, formatted_date)
 
-        dt = datetime(2016, 03, 17, 16, 32, 24, 10)
+        dt = datetime(2016, 3, 17, 16, 32, 24, 10)
         formatted_date = format_date(dt)
         self.assertEqual('2016-03-17 16:32', formatted_date)
 
-        dt = datetime(2016, 03, 17, 16, 32, 24, 10, pytz.utc)
+        dt = datetime(2016, 3, 17, 16, 32, 24, 10, pytz.utc)
         formatted_date = format_date(dt)
         self.assertEqual('2016-03-17 16:32', formatted_date)
 
-        dt = datetime(2016, 03, 17, 16, 32, 24, 10, pytz.timezone('Europe/Istanbul'))
+        dt = datetime(2016, 3, 17, 16, 32, 24, 10, pytz.timezone('Europe/Istanbul'))
         formatted_date = format_date(dt)
         self.assertEqual('2016-03-17 16:32', formatted_date)
 
