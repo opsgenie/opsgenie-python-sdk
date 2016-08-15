@@ -28,7 +28,7 @@ with open('test-requirements.txt') as f:
 
 setup(
     name='opsgenie-sdk',
-    version='0.1.6',
+    version='0.2.0',
     packages=['opsgenie', 'opsgenie.alert', 'opsgenie.heartbeat', 'opsgenie.integration', 'opsgenie.policy',
               'opsgenie.tests'],
     install_requires=install_requires,
