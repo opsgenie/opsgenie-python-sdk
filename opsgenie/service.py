@@ -1,3 +1,4 @@
+from functools import wraps
 import platform
 
 import pkg_resources
@@ -129,7 +130,8 @@ def execute(method, url_suffix, response_cls, attachment=False):
     attachment : bool
     """
 
-    def request_wrapper(__):
+    def request_wrapper(wrapped):
+        @wraps(wrapped)
         def request_call(self, request):
             """
 
