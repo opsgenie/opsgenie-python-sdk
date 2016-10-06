@@ -40,7 +40,11 @@ def list_to_str(list_of_str):
 def convert_to_date(nano):
     if nano is None:
         return None
-    return datetime.utcfromtimestamp(nano // 1000000000)
+
+    try:
+        return datetime.utcfromtimestamp(nano // 1000)
+    except ValueError as err:
+        return datetime.utcfromtimestamp(nano // 1000000000)
 
 
 def convert_from_date(date):
