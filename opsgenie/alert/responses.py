@@ -163,6 +163,15 @@ class AcknowledgeAlertResponse(BaseResponse):
         self.decode()
 
 
+class UnAcknowledgeAlertResponse(BaseResponse):
+    def __init__(self, json_str):
+        BaseResponse.__init__(self, json_str)
+        self.status = self.pop('status')
+        self.code = self.pop('code')
+
+        self.decode()
+
+
 class SnoozeAlertResponse(BaseResponse):
     def __init__(self, json_str):
         BaseResponse.__init__(self, json_str)
@@ -272,6 +281,15 @@ class ExecuteActionOfAlertResponse(BaseResponse):
 
 
 class AttachFileToAlertResponse(BaseResponse):
+    def __init__(self, json_str):
+        BaseResponse.__init__(self, json_str)
+        self.status = self.pop('status')
+        self.code = self.pop('code')
+
+        self.decode()
+
+
+class EscalateToNextResponse(BaseResponse):
     def __init__(self, json_str):
         BaseResponse.__init__(self, json_str)
         self.status = self.pop('status')

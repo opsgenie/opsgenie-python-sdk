@@ -8,6 +8,7 @@ from samples import random_str
 API_KEY = "YOUR_API_KEY"
 TEAM_NAME = "YOUR_TEAM_NAME"
 OWNER = "YOUR_USERNAME"
+ESCALATION_NAME = "YOUR_ESCALATION_NAME"
 FILE_PATH = "FILE_PATH_TO_SEND"
 SOURCE = "PYTHON API"
 ACTIONS = ["ACTION1", "ACTION2"]
@@ -41,6 +42,27 @@ def alert_create_acknowledge():
         ack_response = client.alert.acknowledge_alert(AcknowledgeAlertRequest(id=response.alert_id))
         print("status: ", (ack_response.status))
         print("code: ", (ack_response.code))
+
+    except OpsGenieError as err:
+        print("[ERROR]", err.message)
+
+
+def alert_create_unacknowledge():
+    print("\n alert_create_unacknowledge")
+    client = setup_opsgenie_client()
+
+    try:
+        response = create_alert(client)
+
+        # Acknowledge Alert
+        ack_response = client.alert.acknowledge_alert(AcknowledgeAlertRequest(id=response.alert_id))
+        print("Acknowledge status: ", (ack_response.status))
+        print("Acknowledge code: ", (ack_response.code))
+
+        # UnAcknowledge Alert
+        unack_response = client.alert.unacknowledge_alert(UnAcknowledgeAlertRequest(id=response.alert_id))
+        print("status: ", (unack_response.status))
+        print("code: ", (unack_response.code))
 
     except OpsGenieError as err:
         print("[ERROR]", err.message)
@@ -336,7 +358,31 @@ def alert_create_listalerts():
         print("[ERROR]", err.message)
 
 
-alert_create_acknowledge()
+def alert_create_escalatetonext():
+    print("\n alert_create_escalatetonext")
+    client = setup_opsgenie_client()
+
+    try:
+        response = create_alert(client)
+
+        # Add Recipient To Alert
+        add_recipient_response = client.alert.add_recipient_to_alert(
+            AddRecipientToAlertRequest(id=response.alert_id, recipient="recipient"))
+        print("Recipient status: ", (add_recipient_response.status))
+        print("Recipient code: ", (add_recipient_response.code))
+
+        # Escalate To Next
+        escalate_to_next_response = client.alert.escalate_to_next(EscalateToNextAlertRequest(id=response.alert_id, escalation_name=ESCALATION_NAME))
+
+        print("status: ", escalate_to_next_response.status)
+        print("code: ", escalate_to_next_response.code)
+
+    except OpsGenieError as err:
+        print("[ERROR]", err.message)
+
+
+#alert_create_escalatetonext()
+#alert_create_unacknowledge()
 # alert_create_addnote_listnotes()
 # alert_create_addrecipient()
 # alert_create_addtags()

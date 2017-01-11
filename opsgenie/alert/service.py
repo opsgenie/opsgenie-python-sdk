@@ -163,6 +163,22 @@ class AlertService(BaseService):
         """
         pass
 
+    @execute("POST", url_suffix="/alert/unAcknowledge", response_cls=UnAcknowledgeAlertResponse)
+    def unacknowledge_alert(self, request):
+        """
+        OpsGenie UnAcknowledge Alert API call
+        https://www.opsgenie.com/docs/web-api/alert-api#unacknowledgeRequest
+
+        Parameters
+        ----------
+        request : UnAcknowledgeAlertRequest
+
+        Returns
+        --------
+        UnAcknowledgeAlertResponse
+        """
+        pass
+
     @execute("POST", url_suffix="/alert/snooze", response_cls=SnoozeAlertResponse)
     def snooze_alert(self, request):
         """
@@ -368,5 +384,21 @@ class AlertService(BaseService):
         Returns
         --------
         AttachFileToAlertResponse
+        """
+        pass
+
+    @execute("POST", url_suffix="/alert/escalateToNext", response_cls=EscalateToNextResponse)
+    def escalate_to_next(self, request):
+        """
+        OpsGenie Escalate To Next API call
+        https://www.opsgenie.com/docs/web-api/alert-api#escalateToNextRequest
+
+        Parameters
+        ----------
+        request : EscalateToNextRequest
+
+        Returns
+        --------
+        EscalateToNextResponse
         """
         pass

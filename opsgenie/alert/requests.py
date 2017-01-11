@@ -460,6 +460,51 @@ class AcknowledgeAlertRequest(BaseRequest):
             'source': self.source
         }
 
+class UnAcknowledgeAlertRequest(BaseRequest):
+    def __init__(self, id=None, alias=None, tiny_id=None, user=None, note=None, source=None):
+        """
+        Used to hold required parameters of UnAcknowledge Alert Request call.
+        https://www.opsgenie.com/docs/web-api/alert-api#unacknowledgeRequest
+
+        One of the [id, alias, tiny_id] parameters must be given, can not be given together.
+
+        Parameters
+        ----------
+        id : str, optional
+            Id of the alert that will be un-acknowledged.
+        alias : str, optional
+            Alias of the alert that will be un-acknowledged.
+        tiny_id : str, optional
+            Short id assigned to the alert. All requests supports tiny_id but using this field is not recommended because it rolls.
+        user : str, optional
+            Default owner of the execution. If user is not specified, the system becomes owner of the execution
+        note : str, optional
+            Additional alert note
+        source : str, optional
+            User defined field to specify source of unacknowledge action
+        """
+        BaseRequest.__init__(self)
+        self.id = id
+        self.alias = alias
+        self.tiny_id = tiny_id
+        self.user = user
+        self.note = note
+        self.source = source
+
+        @required_one_of(["id", "alias", "tiny_id"])
+        def validate(self):
+            pass
+
+        def decode(self):
+            return {
+                'id': self.id,
+                'alias': self.alias,
+                'tiny_id': self.tiny_id,
+                'user': self.user,
+                'note': self.note,
+                'source': self.source
+            }
+
 
 class SnoozeAlertRequest(BaseRequest):
     def __init__(self, id=None, alias=None, end_date=None, time_zone=None, user=None, note=None, source=None):
@@ -1062,6 +1107,63 @@ class AttachFileToAlertRequest(BaseRequest):
         return {
             'id': self.id,
             'alias': self.alias,
+            'user': self.user,
+            'note': self.note,
+            'source': self.source
+        }
+
+class EscalateToNextAlertRequest(BaseRequest):
+    def __init__(self, id=None, alias=None, tiny_id=None, escalation_id=None, escalation_name=None, note=None, user=None, source=None):
+        """
+        Used to hold required parameters of Escalate To Next Request call.
+        https://www.opsgenie.com/docs/web-api/alert-api#escalateToNextRequest
+
+        One of the [id, alias, tiny_id] parameters must be given, can not be given together.
+        Alias option can only be used for open alerts.
+
+        One of the [escalation_id, escalation_name] parameters must be given, cannot be given together.
+
+        Parameters
+        ----------
+        id : str, optional
+            Id of the alert to be retrieved.
+        alias : str, optional
+            Alias of the alert to be retrieved. Using alias will only retrieve an open alert with that alias.
+        tiny_id : str, optional
+            short id assigned to the alert. All requests supports tinyId but using this field is not recommended because it rolls
+        escalation_id : !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!, optional
+            Id of the escalation that will be escalated to the next level
+        escalation_name : str, optional
+            Name of the escalation that will be escalated to the next level
+        note : str, required
+            Note text that will be added
+        user : str, optional
+            Sets default owner of the execution. Default is owner of account.
+        source : str, optional
+            User defined field to specify source of close action.
+        """
+        BaseRequest.__init__(self)
+        self.id = id
+        self.alias = alias
+        self.tiny_id = tiny_id
+        self.escalation_id = escalation_id
+        self.escalation_name = escalation_name
+        self.note = note
+        self.user = user
+        self.source = source
+
+    @required_one_of(["id", "alias", "tiny_id"])
+    @required_one_of(["escalation_id", "escalation_name"])
+    def validate(self):
+        pass
+
+    def decode(self):
+        return {
+            'id': self.id,
+            'alias': self.alias,
+            'tiny_id': self.tiny_id,
+            'escalationId': self.escalation_id,
+            'escalationName': self.escalation_name,
             'user': self.user,
             'note': self.note,
             'source': self.source
