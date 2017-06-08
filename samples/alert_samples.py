@@ -1,400 +1,553 @@
 from __future__ import print_function
-from opsgenie import OpsGenie
-from opsgenie.alert.requests import *
-from opsgenie.config import Configuration
-from opsgenie.errors import OpsGenieError
-from samples import random_str
 
+from pprint import pprint
+
+from opsgenie.swagger_client import AlertApi
+from opsgenie.swagger_client import configuration
+from opsgenie.swagger_client.models import *
+from opsgenie.swagger_client.rest import ApiException
+
+REQUEST_ID = "YOUR_REQUEST_ID"
 API_KEY = "YOUR_API_KEY"
-TEAM_NAME = "YOUR_TEAM_NAME"
-OWNER = "YOUR_USERNAME"
-ESCALATION_NAME = "YOUR_ESCALATION_NAME"
-FILE_PATH = "FILE_PATH_TO_SEND"
-SOURCE = "PYTHON API"
-ACTIONS = ["ACTION1", "ACTION2"]
-ACTION_TO_EXECUTE = ACTIONS[0]
+IDENTIFIER = "YOUR_ALERT_IDENTIFIER"
+IDENTIFIER_TYPE = "YOUR_ALERT_IDENTIFIER_TYPE"
 
 
 def setup_opsgenie_client():
-    config = Configuration(apikey=API_KEY)
-    return OpsGenie(config)
+    configuration.api_key['Authorization'] = API_KEY
+    configuration.api_key_prefix['Authorization'] = 'GenieKey'
+    # Provides more detailed request
+    # configuration.debug = True
 
 
-def create_alert(client):
-    # Create Alert
-    response = client.alert.create_alert(CreateAlertRequest(message=random_str(8, 'Test')))
-    print("message: ", (response.message))
-    print("alert id: ", (response.alert_id))
-    print("status: ", (response.status))
-    print("code: ", (response.code))
-
-    return response
-
-
-def alert_create_acknowledge():
-    print("\n alert_create_acknowledge")
-    client = setup_opsgenie_client()
+def get_request_status():
+    setup_opsgenie_client()
 
     try:
-        response = create_alert(client)
+        response = AlertApi().get_request_status(request_id=REQUEST_ID)
 
-        # Acknowledge Alert
-        ack_response = client.alert.acknowledge_alert(AcknowledgeAlertRequest(id=response.alert_id))
-        print("status: ", (ack_response.status))
-        print("code: ", (ack_response.code))
-
-    except OpsGenieError as err:
-        print("[ERROR]", err.message)
-
-
-def alert_create_unacknowledge():
-    print("\n alert_create_unacknowledge")
-    client = setup_opsgenie_client()
-
-    try:
-        response = create_alert(client)
-
-        # Acknowledge Alert
-        ack_response = client.alert.acknowledge_alert(AcknowledgeAlertRequest(id=response.alert_id))
-        print("Acknowledge status: ", (ack_response.status))
-        print("Acknowledge code: ", (ack_response.code))
-
-        # UnAcknowledge Alert
-        unack_response = client.alert.unacknowledge_alert(UnAcknowledgeAlertRequest(id=response.alert_id))
-        print("status: ", (unack_response.status))
-        print("code: ", (unack_response.code))
-
-    except OpsGenieError as err:
-        print("[ERROR]", err.message)
+        print('request id: {}'.format(response.request_id))
+        print('took: {}'.format(response.took))
+        # Refer to GetRequestStatusResponse for more detailed data
+        print('data.alert_id: {}'.format(response.data.alert_id))
+        print('data.alias: {}'.format(response.data.alias))
+        print('data.integration_id: {}'.format(response.data.integration_id))
+        print('data.is_success: {}'.format(response.data.is_success))
+        print('data.processed_at: {}'.format(response.data.processed_at))
+        print('data.action: {}'.format(response.data.action))
+        print('data.status: {}'.format(response.data.status))
+    except ApiException as err:
+        print("Exception when calling AlertApi->get_request_status: %s\n" % err)
 
 
-def alert_create_addnote_listnotes():
-    print("\n alert_create_addnote_listnotes")
-    client = setup_opsgenie_client()
+def create_alert():
+    setup_opsgenie_client()
+
+    body = CreateAlertRequest(
+        message='AppServer1 is down!',
+        alias='Tron',
+        description='CPU usage is over 87%',
+        teams=[TeamRecipient(name='OperationTeam'), TeamRecipient(name="NetworkTeam")],
+        visible_to=[TeamRecipient(name='NetworkTeam', type='team')],
+        actions=['ping', 'restart'],
+        tags=['network', 'operations', 'gomtan'],
+        entity='ApppServer1',
+        priority='P4',
+        user='user@opsgenie.com',
+        note='Alert created')
 
     try:
-        response = create_alert(client)
+        response = AlertApi().create_alert(body=body)
 
-        # Add 10 Note to Alert
-        for i in range(10):
-            request = AddNoteToAlertRequest(response.alert_id, note=random_str(45))
-            add_note_response = client.alert.add_note_to_alert(request)
-            print("[Add note] ", (add_note_response.status), (add_note_response.code))
-
-        # List Notes of Alert
-        list_notes_response = client.alert.list_alert_notes(ListAlertNotesRequest(response.alert_id))
-        print("Last Key: ", (list_notes_response.last_key))
-        print("Notes: \n --------")
-
-        for note in list_notes_response.notes:
-            print("Note: ", (note.note))
-            print("Owner: ", (note.owner))
-            print("Created At: ", (note.created_at))
-            print("------------------")
-
-    except OpsGenieError as err:
-        print("[ERROR]", err.message)
+        print('request id: {}'.format(response.request_id))
+        print('took: {}'.format(response.took))
+        print('result: {}'.format(response.result))
+    except ApiException as err:
+        print("Exception when calling AlertApi->create_alert: %s\n" % err)
 
 
-def alert_create_addrecipient():
-    print("\n alert_create_addrecipient")
-    client = setup_opsgenie_client()
+def close_alert():
+    setup_opsgenie_client()
+
+    body = CloseAlertRequest(
+        source='System',
+        user='user@opsgenie.com',
+        note='Alert was unnecessary, closed by System')
 
     try:
-        response = create_alert(client)
+        response = AlertApi().close_alert(identifier=IDENTIFIER, identifier_type=IDENTIFIER_TYPE, body=body)
 
-        # Add Recipient
-        add_recipient_response = client.alert.add_recipient_to_alert(
-            AddRecipientToAlertRequest(id=response.alert_id, recipient="recipient"))
-        print("status: ", (add_recipient_response.status))
-        print("code: ", (add_recipient_response.code))
-
-    except OpsGenieError as err:
-        print("[ERROR]", err.message)
+        pprint(response)
+    except ApiException as err:
+        print("Exception when calling AlertApi->close_alert: %s\n" % err)
 
 
-def alert_create_addtags():
-    print("\n alert_create_addtags")
-    client = setup_opsgenie_client()
+def delete_alert():
+    setup_opsgenie_client()
 
     try:
-        response = create_alert(client)
+        response = AlertApi().delete_alert(
+            identifier=IDENTIFIER,
+            identifier_type=IDENTIFIER_TYPE,
+            source='System',
+            user='user@opsgenie.com')
 
-        # Add Tags
-        add_tags_response = client.alert.add_tags_to_alert(
-            AddTagsToAlertRequest(id=response.alert_id, tags=["tag1", "tag2"]))
-        print("status: ", (add_tags_response.status))
-        print("code: ", (add_tags_response.code))
-
-    except OpsGenieError as err:
-        print("[ERROR]", err.message)
-
-
-def alert_create_addteam():
-    print("\n alert_create_addteam")
-    client = setup_opsgenie_client()
-
-    try:
-        response = create_alert(client)
-
-        # Add Team
-        add_team_response = client.alert.add_team_to_alert(
-            AddTeamToAlertRequest(id=response.alert_id, team=TEAM_NAME))
-        print("status: ", (add_team_response.status))
-        print("code: ", (add_team_response.code))
-
-    except OpsGenieError as err:
-        print("[ERROR]", err.message)
+        print('request id: {}'.format(response.request_id))
+        print('took: {}'.format(response.took))
+        print('result: {}'.format(response.result))
+    except ApiException as err:
+        print("Exception when calling AlertApi->delete_alert: %s\n" % err)
 
 
-def alert_create_assignowner():
-    print("\n alert_create_assignowner")
-    client = setup_opsgenie_client()
+def get_alert():
+    setup_opsgenie_client()
 
     try:
-        response = create_alert(client)
+        # Default identifier_type is id
+        response = AlertApi().get_alert(identifier=IDENTIFIER, identifier_type=IDENTIFIER_TYPE)
 
-        # Assign Owner
-        assign_owner_response = client.alert.assign_owner_to_alert(
-            AssignOwnerToAlertRequest(id=response.alert_id, owner=OWNER))
-        print("status: ", (assign_owner_response.status))
-        print("code: ", (assign_owner_response.code))
-
-    except OpsGenieError as err:
-        print("[ERROR]", err.message)
-
-
-def alert_create_attachfile():
-    print("\n alert_create_attachfile")
-    client = setup_opsgenie_client()
-
-    try:
-        response = create_alert(client)
-
-        # Attach File
-        attach_file_response = client.alert.attach_file_to_alert(
-            AttachFileToAlertRequest(id=response.alert_id, attachment=FILE_PATH))
-        print("status: ", (attach_file_response.status))
-        print("code: ", (attach_file_response.code))
-
-    except OpsGenieError as err:
-        print("[ERROR]", err.message)
-
-
-def alert_create_close():
-    print("\n alert_create_close")
-    client = setup_opsgenie_client()
-
-    try:
-        response = create_alert(client)
-
-        # Close Alert
-        close_alert_response = client.alert.close_alert(CloseAlertRequest(id=response.alert_id))
-        print("status: ", (close_alert_response.status))
-        print("code: ", (close_alert_response.code))
-
-    except OpsGenieError as err:
-        print("[ERROR]", err.message)
+        # Refer to GetAlertResponse for more detailed data
+        print(response)
+        print('request id: {}'.format(response.request_id))
+        print('took: {}'.format(response.took))
+        print('data.acknowledged: {}'.format(response.data.acknowledged))
+        print('data.actions: {}'.format(response.data.actions))
+        print('data.alias: {}'.format(response.data.alias))
+        print('data.count: {}'.format(response.data.count))
+        print('data.created_at: {}'.format(response.data.created_at))
+        print('data.description: {}'.format(response.data.description))
+        print('data.details: {}'.format(response.data.details))
+        print('data.entity: {}'.format(response.data.entity))
+        print('data.id: {}'.format(response.data.id))
+        print('data.integration: {}'.format(response.data.integration))
+        print('data.is_seen: {}'.format(response.data.is_seen))
+        print('data.last_occurred_at: {}'.format(response.data.last_occurred_at))
+        print('data.message: {}'.format(response.data.message))
+        print('data.owner: {}'.format(response.data.owner))
+        print('data.priority: {}'.format(response.data.priority))
+        print('data.report: {}'.format(response.data.report))
+        print('data.snoozed: {}'.format(response.data.snoozed))
+        print('data.snoozed_until: {}'.format(response.data.snoozed_until))
+        print('data.source: {}'.format(response.data.source))
+        print('data.status: {}'.format(response.data.status))
+        print('data.tags: {}'.format(response.data.tags))
+        print('data.teams: {}'.format(response.data.teams))
+        print('data.tiny_id: {}'.format(response.data.tiny_id))
+        print('data.updated_at: {}'.format(response.data.updated_at))
+    except ApiException as err:
+        print("Exception when calling AlertApi->get_alert: %s\n" % err)
 
 
-def alert_create_delete():
-    print("\n alert_create_delete")
-    client = setup_opsgenie_client()
+def list_alerts():
+    setup_opsgenie_client()
 
     try:
-        response = create_alert(client)
+        # Default identifier_type is id
+        response = AlertApi().list_alerts(
+            limit=25,
+            query='status: open',
+            order='desc',
+            sort='createdAt')
 
-        # Delete Alert
-        delete_alert_response = client.alert.delete_alert(DeleteAlertRequest(id=response.alert_id, source=SOURCE))
-        print("status: ", (delete_alert_response.status))
-        print("code: ", (delete_alert_response.code))
-
-    except OpsGenieError as err:
-        print("[ERROR]", err.message)
-
-
-def alert_create_executeaction():
-    print("\n alert_create_executeaction")
-    client = setup_opsgenie_client()
-
-    try:
-        response = client.alert.create_alert(CreateAlertRequest(message=random_str(10, "Test"), actions=ACTIONS))
-
-        # Execute Action
-        execute_action_response = client.alert.execute_action_of_alert(
-            ExecuteActionOfAlertRequest(id=response.alert_id, action=ACTION_TO_EXECUTE,
-                                        note="Action {} executed by Python API".format(ACTION_TO_EXECUTE)))
-        print("status: ", (execute_action_response.status))
-        print("code: ", (execute_action_response.code))
-
-    except OpsGenieError as err:
-        print("[ERROR]", err.message)
-
-
-def alert_create_get():
-    print("\n alert_create_get")
-    client = setup_opsgenie_client()
-
-    try:
-        response = create_alert(client)
-
-        # Get Alert
-        get_alert_response = client.alert.get_alert(GetAlertRequest(id=response.alert_id))
-        print("tags: ", (list_to_str(get_alert_response.tags)))
-        print("count: ", (get_alert_response.count))
-        print("teams: ", (list_to_str(get_alert_response.teams)))
-        print("recipients: ", (list_to_str(get_alert_response.recipients)))
-        print("tiny id: ", (get_alert_response.tiny_id))
-        print("alias: ", (get_alert_response.alias))
-        print("entity: ", (get_alert_response.entity))
-        print("id: ", (get_alert_response.id))
-        print("updated at: ", (get_alert_response.updated_at))
-        print("message: ", (get_alert_response.message))
-        print("details: ", (get_alert_response.details))
-        print("source: ", (get_alert_response.source))
-        print("description: ", (get_alert_response.description))
-        print("created at: ", (get_alert_response.created_at))
-        print("is seen: ", (get_alert_response.is_seen))
-        print("acknowledged: ", (get_alert_response.acknowledged))
-        print("owner: ", (get_alert_response.owner))
-        print("system data: ", (get_alert_response.system_data))
-        print("actions: ", (list_to_str(get_alert_response.actions)))
-
-    except OpsGenieError as err:
-        print("[ERROR]", err.message)
+        # Refer to ListAlertsResponse for more detailed data
+        print('request id: {}'.format(response.request_id))
+        print('took: {}'.format(response.took))
+        for alert_response in response.data:
+            print('alert_response.id: {}'.format(alert_response.id))
+            print('alert_response.tiny_id: {}'.format(alert_response.tiny_id))
+            print('alert_response.alias: {}'.format(alert_response.alias))
+            print('alert_response.message: {}'.format(alert_response.message))
+            print('alert_response.status: {}'.format(alert_response.status))
+            print('alert_response.acknowledged: {}'.format(alert_response.acknowledged))
+            print('alert_response.is_seen: {}'.format(alert_response.is_seen))
+            print('alert_response.tags: {}'.format(alert_response.tags))
+            print('alert_response.snoozed: {}'.format(alert_response.snoozed))
+            print('alert_response.snoozed_until: {}'.format(alert_response.snoozed_until))
+            print('alert_response.count: {}'.format(alert_response.count))
+            print('alert_response.last_occurred_at: {}'.format(alert_response.last_occurred_at))
+            print('alert_response.created_at: {}'.format(alert_response.created_at))
+            print('alert_response.updated_at: {}'.format(alert_response.updated_at))
+            print('alert_response.source: {}'.format(alert_response.source))
+            print('alert_response.owner: {}'.format(alert_response.owner))
+            print('alert_response.priority: {}'.format(alert_response.priority))
+            print('alert_response.teams: {}'.format(alert_response.teams))
+            print('alert_response.integration: {}'.format(alert_response.integration))
+            print('alert_response.report: {}'.format(alert_response.report))
+    except ApiException as err:
+        print("Exception when calling AlertApi->list_alerts: %s\n" % err)
 
 
-def alert_create_listlogs():
-    print("\n alert_create_listlogs")
-    client = setup_opsgenie_client()
+def acknowledge_alert():
+    setup_opsgenie_client()
+
+    body = AcknowledgeAlertRequest(
+        source='System',
+        user='user@opsgenie.com',
+        note='Alert was unnecessary, acknowledged by System')
 
     try:
-        response = create_alert(client)
+        response = AlertApi().acknowledge_alert(
+            identifier=IDENTIFIER,
+            identifier_type=IDENTIFIER_TYPE,
+            body=body)
 
-        # List Logs of Alert
-        list_logs_response = client.alert.list_alert_logs(ListAlertLogsRequest(response.alert_id))
-
-        for log in list_logs_response.logs:
-            print("Owner: ", (log.owner))
-            print("Log: ", (log.log))
-            print("Log Type: ", (log.log_type))
-            print("Created At: ", (log.created_at))
-            print("------------------")
-
-    except OpsGenieError as err:
-        print("[ERROR]", err.message)
+        print('request id: {}'.format(response.request_id))
+        print('took: {}'.format(response.took))
+        print('result: {}'.format(response.result))
+    except ApiException as err:
+        print("Exception when calling AlertApi->acknowledge_alert: %s\n" % err)
 
 
-def alert_create_listrecipients():
-    print("\n alert_create_listrecipients")
-    client = setup_opsgenie_client()
+def unacknowledge_alert():
+    setup_opsgenie_client()
 
-    try:
-        response = create_alert(client)
-
-        # List Recipients of Alert
-        list_recipients_response = client.alert.list_alert_recipients(ListAlertRecipientsRequest(response.alert_id))
-
-        print("Users: ", (list_to_str([u.username for u in list_recipients_response.users])))
-        print("Groups: ", (list_to_str([u.username for u in list_recipients_response.groups])))
-    except OpsGenieError as err:
-        print("[ERROR]", err.message)
-
-
-def alert_create_renotify():
-    print("\n alert_create_renotify")
-    client = setup_opsgenie_client()
+    body = UnAcknowledgeAlertRequest(
+        source='System',
+        user='user@opsgenie.com',
+        note='Alert was necessary, unacknowledged by System')
 
     try:
-        response = client.alert.create_alert(CreateAlertRequest(message=random_str(10, "Test"), actions=ACTIONS))
+        response = AlertApi().un_acknowledge_alert(
+            identifier=IDENTIFIER,
+            identifier_type=IDENTIFIER_TYPE,
+            body=body)
 
-        # Renotify Alert
-        renotify_response = client.alert.renotify_alert(RenotifyAlertRequest(id=response.alert_id))
-        print("status: ", (renotify_response.status))
-        print("code: ", (renotify_response.code))
-
-    except OpsGenieError as err:
-        print("[ERROR]", err.message)
-
-
-def alert_create_takeownership():
-    print("\n alert_create_takeownership")
-    client = setup_opsgenie_client()
-
-    try:
-        response = create_alert(client)
-
-        # Take ownership of Alert
-        renotify_response = client.alert.take_ownership_of_alert(TakeOwnershipOfAlertRequest(id=response.alert_id))
-        print("status: ", (renotify_response.status))
-        print("code: ", (renotify_response.code))
-
-    except OpsGenieError as err:
-        print("[ERROR]", err.message)
+        pprint(response)
+    except ApiException as err:
+        print("Exception when calling AlertApi->unacknowledge_alert: %s\n" % err)
 
 
-def alert_create_listalerts():
-    print("\n alert_create_listalerts")
-    client = setup_opsgenie_client()
+def snooze_alert():
+    setup_opsgenie_client()
+
+    body = SnoozeAlertRequest(
+        source='System',
+        user='user@opsgenie.com',
+        note='Snoozed because of vacation by System',
+        end_time='2017-02-06T05:00:00Z')
 
     try:
-        # List Alerts
-        list_alerts_response = client.alert.list_alerts(ListAlertsRequest())
+        response = AlertApi().snooze_alert(
+            identifier=IDENTIFIER,
+            identifier_type=IDENTIFIER_TYPE,
+            body=body)
 
-        for alert in list_alerts_response.alerts:
-            print("Id: ", alert.id)
-            print("Alias: ", alert.alias)
-            print("Message: ", alert.message)
-            print("Status: ", alert.status)
-            print("IsSeen: ", alert.is_seen)
-            print("Acknowledged: ", alert.acknowledged)
-            print("Created at: ", alert.created_at)
-            print("Updated at: ", alert.updated_at)
-            print("Tiny id: ", alert.tiny_id)
-            print("Owner: ", alert.owner)
-            print("------------------")
-
-    except OpsGenieError as err:
-        print("[ERROR]", err.message)
+        pprint(response)
+    except ApiException as err:
+        print("Exception when calling AlertApi->snooze_alert: %s\n" % err)
 
 
-def alert_create_escalatetonext():
-    print("\n alert_create_escalatetonext")
-    client = setup_opsgenie_client()
+def escalate_alert_to_next():
+    setup_opsgenie_client()
+
+    body = EscalateAlertToNextRequest(
+        source='System',
+        user='user@opsgenie.com',
+        note='Escalated',
+        escalation=EscalationRecipient(id='39d50168-24b3-4355-b285-b91060823dee'))
 
     try:
-        response = create_alert(client)
+        response = AlertApi().escalate_alert(
+            identifier=IDENTIFIER,
+            identifier_type=IDENTIFIER_TYPE,
+            body=body)
 
-        # Add Recipient To Alert
-        add_recipient_response = client.alert.add_recipient_to_alert(
-            AddRecipientToAlertRequest(id=response.alert_id, recipient="recipient"))
-        print("Recipient status: ", (add_recipient_response.status))
-        print("Recipient code: ", (add_recipient_response.code))
-
-        # Escalate To Next
-        escalate_to_next_response = client.alert.escalate_to_next(EscalateToNextAlertRequest(id=response.alert_id, escalation_name=ESCALATION_NAME))
-
-        print("status: ", escalate_to_next_response.status)
-        print("code: ", escalate_to_next_response.code)
-
-    except OpsGenieError as err:
-        print("[ERROR]", err.message)
+        pprint(response)
+    except ApiException as err:
+        print("Exception when calling AlertApi->escalate_alert_to_next: %s\n" % err)
 
 
-#alert_create_escalatetonext()
-#alert_create_unacknowledge()
-# alert_create_addnote_listnotes()
-# alert_create_addrecipient()
-# alert_create_addtags()
-# alert_create_addteam()
-# alert_create_assignowner()
-# alert_create_attachfile()
-# alert_create_close()
-# alert_create_delete()
-# alert_create_executeaction()
-# alert_create_get()
-# alert_create_listalerts()
-# alert_create_listlogs()
-# alert_create_listrecipients()
-# alert_create_renotify()
-# alert_create_takeownership()
+def assign_alert():
+    setup_opsgenie_client()
+
+    body = AssignAlertRequest(
+        source='System',
+        user='user@opsgenie.com',
+        note='Assigned',
+        owner=UserRecipient(username='user@opsgenie.com'))
+
+    try:
+        response = AlertApi().assign_alert(
+            identifier=IDENTIFIER,
+            identifier_type=IDENTIFIER_TYPE,
+            body=body)
+
+        pprint(response)
+    except ApiException as err:
+        print("Exception when calling AlertApi->assign_alert: %s\n" % err)
+
+
+def add_alert_note():
+    setup_opsgenie_client()
+
+    body = AddAlertNoteRequest(
+        source='HR',
+        user='user@opsgenie.com',
+        note='We should find another solution.')
+
+    try:
+        response = AlertApi().add_note(
+            identifier=IDENTIFIER,
+            identifier_type=IDENTIFIER_TYPE,
+            body=body)
+
+        pprint(response)
+    except ApiException as err:
+        print("Exception when calling AlertApi->add_alert_note: %s\n" % err)
+
+
+def add_alert_tags():
+    setup_opsgenie_client()
+
+    body = AddAlertTagsRequest(
+        source='Server',
+        user='user@opsgenie.com',
+        note='We should find another tag.',
+        tags=['support', 'network'])
+
+    try:
+        response = AlertApi().add_tags(
+            identifier=IDENTIFIER,
+            identifier_type=IDENTIFIER_TYPE,
+            body=body)
+
+        pprint(response)
+    except ApiException as err:
+        print("Exception when calling AlertApi->add_alert_tags: %s\n" % err)
+
+
+def remove_alert_tags():
+    setup_opsgenie_client()
+
+    try:
+        response = AlertApi().delete_tags(
+            identifier=IDENTIFIER,
+            identifier_type=IDENTIFIER_TYPE,
+            user='user@opsgenie.com',
+            tags=['support', 'network'],
+            note='Unnecessary tags are removed.',
+            source='Server')
+
+        pprint(response)
+    except ApiException as err:
+        print("Exception when calling AlertApi->remove_alert_tags: %s\n" % err)
+
+
+def add_alert_team():
+    setup_opsgenie_client()
+
+    body = AddAlertTeamRequest(
+        team=TeamRecipient(name='OperationTeam'),
+        source='System',
+        note='Team is added',
+        user='user@opsgenie.com')
+
+    try:
+        response = AlertApi().add_team(
+            identifier=IDENTIFIER,
+            identifier_type=IDENTIFIER_TYPE,
+            body=body)
+
+        pprint(response)
+    except ApiException as err:
+        print("Exception when calling AlertApi->add_alert_team: %s\n" % err)
+
+
+def add_alert_details():
+    setup_opsgenie_client()
+
+    body = AddAlertDetailsRequest(
+        user='user@opsgenie.com',
+        note='Add these details to document',
+        source='HR',
+        details={'prop1': 'val1', 'prop2': 'val2'})
+
+    try:
+        response = AlertApi().add_details(
+            identifier=IDENTIFIER,
+            identifier_type=IDENTIFIER_TYPE,
+            body=body)
+
+        pprint(response)
+    except ApiException as err:
+        print("Exception when calling AlertApi->add_alert_details: %s\n" % err)
+
+
+def remove_alert_details():
+    setup_opsgenie_client()
+
+    try:
+        response = AlertApi().delete_details(
+            identifier=IDENTIFIER,
+            identifier_type=IDENTIFIER_TYPE,
+            user='user@opsgenie.com',
+            note='Remove unrelated details.',
+            source='System',
+            keys=['prop1', 'prop2'])
+
+        pprint(response)
+    except ApiException as err:
+        print("Exception when calling AlertApi->remove_alert_details: %s\n" % err)
+
+
+def execute_custom_alert_action():
+    setup_opsgenie_client()
+
+    body = ExecuteCustomAlertActionRequest(
+        user='user@opsgenie.com',
+        note='"Executing rebase action"',
+        source='Automation',
+    )
+
+    try:
+        response = AlertApi().execute_custom_action(
+            identifier=IDENTIFIER,
+            identifier_type=IDENTIFIER_TYPE,
+            action_name='rebase',
+            body=body)
+
+        pprint(response)
+    except ApiException as err:
+        print("Exception when calling AlertApi->execute_custom_alert_action: %s\n" % err)
+
+
+def list_alert_recipients():
+    setup_opsgenie_client()
+
+    try:
+        response = AlertApi().list_recipients(
+            identifier=IDENTIFIER,
+            identifier_type=IDENTIFIER_TYPE)
+
+        # Refer to ListAlertRecipientsResponse for more detailed data
+        print('request id: {}'.format(response.request_id))
+        print('took: {}'.format(response.took))
+        for alert_response in response.data:
+            print('alert_response.created_at: {}'.format(alert_response.created_at))
+            print('alert_response.method: {}'.format(alert_response.method))
+            print('alert_response.state: {}'.format(alert_response.state))
+            print('alert_response.updated_at: {}'.format(alert_response.updated_at))
+            print('alert_response.user: {}'.format(alert_response.user))
+    except ApiException as err:
+        print("Exception when calling AlertApi->list_recipients: %s\n" % err)
+
+
+def list_alert_logs():
+    setup_opsgenie_client()
+
+    try:
+        response = AlertApi().list_logs(
+            identifier=IDENTIFIER,
+            identifier_type=IDENTIFIER_TYPE,
+            limit=50,
+            order='asc',
+            direction='next')
+
+        # Refer to ListAlertLogsResponse for more detailed data
+        print('request id: {}'.format(response.request_id))
+        print('paging: {}'.format(response.paging))
+        print('took: {}'.format(response.took))
+        for alert_log_response in response.data:
+            print('alert_log_response.log: {}'.format(alert_log_response.log))
+            print('alert_log_response.type: {}'.format(alert_log_response.type))
+            print('alert_log_response.owner: {}'.format(alert_log_response.owner))
+            print('alert_log_response.created_at: {}'.format(alert_log_response.created_at))
+            print('alert_log_response.offset: {}'.format(alert_log_response.offset))
+    except ApiException as err:
+        print("Exception when calling AlertApi->list_alert_logs: %s\n" % err)
+
+
+def list_alert_notes():
+    setup_opsgenie_client()
+
+    try:
+        response = AlertApi().list_notes(
+            identifier=IDENTIFIER,
+            identifier_type=IDENTIFIER_TYPE,
+            limit=50,
+            order='asc',
+            direction='next')
+
+        # Refer to ListAlertNotesResponse for more detailed data
+        print('request id: {}'.format(response.request_id))
+        print('paging: {}'.format(response.paging))
+        print('took: {}'.format(response.took))
+        for alert_notes_response in response.data:
+            print('alert_notes_response.note: {}'.format(alert_notes_response.note))
+            print('alert_notes_response.owner: {}'.format(alert_notes_response.owner))
+            print('alert_notes_response.created_at: {}'.format(alert_notes_response.created_at))
+            print('alert_notes_response.offset: {}'.format(alert_notes_response.offset))
+    except ApiException as err:
+        print("Exception when calling AlertApi->list_alert_notes: %s\n" % err)
+
+
+def add_saved_search():
+    setup_opsgenie_client()
+
+    body = AddSavedSearchRequest(
+        name='My Saved Search',
+        description='Saved search for open alerts',
+        query='status: open',
+        owner=UserRecipient(username='user@opsgenie.com'))
+
+    try:
+        response = AlertApi().add_saved_searches(body)
+
+        print('request id: {}'.format(response.request_id))
+        print('took: {}'.format(response.took))
+        print('data.id: {}'.format(response.data.id))
+        print('data.name: {}'.format(response.data.name))
+    except ApiException as err:
+        print("Exception when calling AlertApi->add_saved_search: %s\n" % err)
+
+
+def get_saved_search():
+    setup_opsgenie_client()
+
+    try:
+        response = AlertApi().get_saved_search(
+            identifier=IDENTIFIER,
+            identifier_type=IDENTIFIER_TYPE)
+
+        print('request id: {}'.format(response.request_id))
+        print('took: {}'.format(response.took))
+        print('data.id: {}'.format(response.data.id))
+        print('data.name: {}'.format(response.data.name))
+        print('data.created_at: {}'.format(response.data.created_at))
+        print('data.updated_at: {}'.format(response.data.updated_at))
+        print('data.owner: {}'.format(response.data.owner))
+        print('data.teams: {}'.format(response.data.teams))
+        print('data.description: {}'.format(response.data.description))
+        print('data.query: {}'.format(response.data.query))
+    except ApiException as err:
+        print("Exception when calling AlertApi->get_saved_search: %s\n" % err)
+
+
+def delete_saved_search():
+    setup_opsgenie_client()
+
+    try:
+        response = AlertApi().delete_saved_search(
+            identifier=IDENTIFIER,
+            identifier_type=IDENTIFIER_TYPE)
+
+        pprint(response)
+    except ApiException as err:
+        print("Exception when calling AlertApi->delete_saved_search: %s\n" % err)
+
+
+def list_saved_search():
+    setup_opsgenie_client()
+
+    try:
+        response = AlertApi().list_saved_searches()
+
+        # Refer to ListSavedSearchResponse for more detailed data
+        print('request id: {}'.format(response.request_id))
+        print('took: {}'.format(response.took))
+        for saved_search_response in response.data:
+            print('saved_search_response.id: {}'.format(saved_search_response.id))
+            print('saved_search_response.name: {}'.format(saved_search_response.name))
+
+    except ApiException as err:
+        print("Exception when calling AlertApi->list_saved_search: %s\n" % err)
