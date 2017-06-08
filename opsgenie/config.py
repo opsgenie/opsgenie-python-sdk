@@ -1,3 +1,4 @@
+from opsgenie import swagger_client
 from .errors import ApiKeyMissingError, EndpointMissingError, InvalidConfigurationError
 
 
@@ -35,6 +36,10 @@ class Configuration:
         else:
             self.proxy_config = None
 
+        self.swag_conf = swagger_client.configuration
+        self.swag_conf.api_key['Authorization'] = self.api_key
+        self.swag_conf.api_key_prefix['Authorization'] = 'GenieKey'
+
     def validate(self):
         if not self.api_key:
             raise ApiKeyMissingError()
@@ -46,6 +51,9 @@ class Configuration:
             self.proxy_config.validate()
 
         self.http_config.validate()
+
+    def swagger_conf(self):
+        return self.swag_conf
 
 
 class HttpConfiguration:

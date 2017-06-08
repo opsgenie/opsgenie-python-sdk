@@ -36,5 +36,5 @@ setup(
     tests_require=test_requires,
     cmdclass={'test': Tox},
     license='Apache License 2.0',
-    keywords=['OpsGenie', 'Web Api', 'Rest Api', 'Alert Api']
+    keywords=['OpsGenie', 'Web Api', 'Rest Api', 'Alert Api', "Swagger"]
 )
