@@ -1,5 +1,5 @@
-from opsgenie import swagger_client
 from .errors import ApiKeyMissingError, EndpointMissingError, InvalidConfigurationError
+from .swagger_client import configuration as SwaggerConf
 
 
 class Configuration:
@@ -36,7 +36,7 @@ class Configuration:
         else:
             self.proxy_config = None
 
-        self.swag_conf = swagger_client.configuration
+        self.swag_conf = SwaggerConf
         self.swag_conf.api_key['Authorization'] = self.api_key
         self.swag_conf.api_key_prefix['Authorization'] = 'GenieKey'
 

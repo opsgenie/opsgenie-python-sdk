@@ -1,7 +1,6 @@
-from swagger_client import AlertApi
-
 from .alert.service import AlertService
 from .config import Configuration
+from .swagger_client import AlertApi
 
 
 class OpsGenie:
