@@ -25,7 +25,7 @@ with open('test-requirements.txt') as f:
 
 setup(
     name='opsgenie-sdk',
-    version='0.3.1',
+    version='0.3.0',
     description='Python SDK for OpsGenie Web/REST API',
     long_description=(open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()),
     url='https://github.com/opsgenie/opsgenie-python-sdk',
