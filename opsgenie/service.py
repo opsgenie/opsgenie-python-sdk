@@ -76,7 +76,8 @@ def generate_timeout_and_retry(http_config):
 def generate_user_agent():
     version = pkg_resources.require("opsgenie-sdk")[0].version
     return "opsgenie-python-sdk/{0}; {1}/{2}; {3}".format(version,
-                                                          platform.system(), platform.release(),
+                                                          platform.system(),
+                                                          platform.release(),
                                                           platform.python_version())
 
 

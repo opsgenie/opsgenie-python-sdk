@@ -10,9 +10,6 @@ from a client application in Python language.
 OpsGenie Python SDK covers:
 
 -  Alert API
--  Heartbeat API (*TODO: will be available soon*)
--  Integration API (*TODO: will be available soon*)
--  Policy API (*TODO: will be available soon*)
 
 Future releases are subject to be delivered for packing more APIs soon.
 
@@ -24,7 +21,7 @@ document.
 Pre-requisites
 --------------
 
--  The API is built for Python 2.7 but can also be used with other Python versions.
+-  The API is specifically built for Python 2.7 but can also be used with other Python versions.
 -  Before you begin, you need to sign up
    `OpsGenie <http://www.opsgenie.com>`__ if you don't have a valid
    account yet. Create an API Integration and get your API key.
@@ -74,11 +71,6 @@ Please follow the links below for more information and details about the
 Web API.
 
 -  `Alert API <https://www.opsgenie.com/docs/web-api/alert-api>`__
--  `Heartbeat
-   API <https://www.opsgenie.com/docs/web-api/heartbeat-api>`__
--  `Integration
-   API <https://www.opsgenie.com/docs/web-api/integration-api>`__
--  `Policy API <https://www.opsgenie.com/docs/web-api/policy-api>`__
 
 Bug Reporting and Feature Requests
 ----------------------------------

@@ -17,7 +17,7 @@ class ApiKeyMissingError(OpsGenieError):
 
 class EndpointMissingError(OpsGenieError):
     def __init__(self):
-        super(EndpointMissingError, self).__init__('OpsGenie endpoing is not configured!')
+        super(EndpointMissingError, self).__init__('OpsGenie end-point is not configured!')
 
 
 class InvalidConfigurationError(OpsGenieError):

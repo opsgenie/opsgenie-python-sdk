@@ -15,9 +15,6 @@ class OpsGenie:
         OpsGenie.configuration = configuration
 
         self._alert = AlertService(configuration)
-        self._heartbeat = None
-        self._integration = None
-        self._policy = None
 
     @property
     def alert(self):
@@ -28,15 +25,3 @@ class OpsGenie:
         AlertService
         """
         return self._alert
-
-    @property
-    def heartbeat(self):
-        raise NotImplementedError()
-
-    @property
-    def integration(self):
-        raise NotImplementedError()
-
-    @property
-    def policy(self):
-        raise NotImplementedError()

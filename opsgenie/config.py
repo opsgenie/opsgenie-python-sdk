@@ -16,7 +16,7 @@ class Configuration:
         http_config : HttpConfiguration or dict
         proxy_config : ProxyConfiguration or dict
         """
-        self.apikey = apikey
+        self.api_key = apikey
         self.endpoint = endpoint
 
         if http_config:
@@ -36,7 +36,7 @@ class Configuration:
             self.proxy_config = None
 
     def validate(self):
-        if not self.apikey:
+        if not self.api_key:
             raise ApiKeyMissingError()
 
         if not self.endpoint:
