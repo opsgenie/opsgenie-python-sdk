@@ -1,3 +1,5 @@
+from swagger_client import AlertApi
+
 from .alert.service import AlertService
 from .config import Configuration
 
@@ -15,9 +17,7 @@ class OpsGenie:
         OpsGenie.configuration = configuration
 
         self._alert = AlertService(configuration)
-        self._heartbeat = None
-        self._integration = None
-        self._policy = None
+        self._alert_v2 = AlertApi()
 
     @property
     def alert(self):
@@ -30,13 +30,11 @@ class OpsGenie:
         return self._alert
 
     @property
-    def heartbeat(self):
-        raise NotImplementedError()
+    def alert_v2(self):
+        """
 
-    @property
-    def integration(self):
-        raise NotImplementedError()
-
-    @property
-    def policy(self):
-        raise NotImplementedError()
+        Returns
+        -------
+        AlertApi
+        """
+        return self._alert_v2

@@ -1,5 +1,6 @@
-from .errors import InvalidRequestError
 from six import string_types
+
+from .errors import InvalidRequestError
 
 
 def required(attr):
@@ -13,7 +14,6 @@ def required(attr):
     -------
 
     """
-
     def wrapper(func):
         def validate(self):
             if getattr(self, attr, None) is None:
@@ -36,7 +36,6 @@ def required_one_of(attrs):
     -------
 
     """
-
     def wrapper(func):
         def validate(self):
             attr_count = 0
@@ -68,7 +67,6 @@ def should_be_one_of(attr, values):
     -------
 
     """
-
     def wrapper(func):
         def validate(self):
             if getattr(self, attr, None) is not None:
@@ -95,7 +93,6 @@ def max_value(attr, value):
     -------
 
     """
-
     def wrapper(func):
         def validate(self):
             if hasattr(self, attr):

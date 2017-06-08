@@ -1,7 +1,7 @@
 import os
 import sys
 
-from setuptools import setup
+from setuptools import setup, find_packages
 from setuptools.command.test import test
 
 
@@ -16,9 +16,6 @@ class Tox(test):
         errcode = tox.cmdline(self.test_args)
         sys.exit(errcode)
 
-long_description = open(
-    os.path.join(os.path.dirname(__file__), 'README.rst')).read()
-
 with open('requirements.txt') as f:
     install_requires = f.read().splitlines()
 
@@ -28,17 +25,16 @@ with open('test-requirements.txt') as f:
 
 setup(
     name='opsgenie-sdk',
-    version='0.2.1',
-    packages=['opsgenie', 'opsgenie.alert', 'opsgenie.heartbeat', 'opsgenie.integration', 'opsgenie.policy',
-              'opsgenie.tests'],
+    version='0.3.0',
+    description='Python SDK for OpsGenie Web/REST API',
+    long_description=(open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()),
+    url='https://github.com/opsgenie/opsgenie-python-sdk',
+    author='OpsGenie',
+    author_email='support@opsgenie.com',
+    packages=find_packages(),
     install_requires=install_requires,
     tests_require=test_requires,
     cmdclass={'test': Tox},
-    url='https://github.com/opsgenie/opsgenie-python-sdk',
     license='Apache License 2.0',
-    author='OpsGenie',
-    author_email='support@opsgenie.com',
-    description='Python SDK for OpsGenie Web/REST API',
-    long_description=long_description,
-    keywords=['OpsGenie', 'Web Api', 'Rest Api']
+    keywords=['OpsGenie', 'Web Api', 'Rest Api', 'Alert Api', "Swagger"]
 )

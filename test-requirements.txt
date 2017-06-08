@@ -1,3 +1,6 @@
-tox
+coverage>=4.0.3
 nose2>=0.6.4
+pluggy>=0.3.1
+py>=1.4.31
+randomize>=0.13
 httpretty>=0.8.14
