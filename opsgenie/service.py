@@ -146,7 +146,7 @@ def execute(method, url_suffix, response_cls, attachment=False):
             request.validate()
 
             url = self.configuration.endpoint + url_suffix
-            params = generate_params(self.configuration.apikey, request)
+            params = generate_params(self.configuration.api_key, request)
             proxy = generate_proxy(self.configuration.proxy_config)
             timeout, retry = generate_timeout_and_retry(self.configuration.http_config)
 

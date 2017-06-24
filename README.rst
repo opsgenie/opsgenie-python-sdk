@@ -66,7 +66,7 @@ our old OpsGenie client for creating alerts to new REST API:
     from opsgenie.config import Configuration
     from opsgenie.swagger_client.rest import ApiException
 
-    config = Configuration("YOUR_API_KEY")
+    config = Configuration(apikey="YOUR_API_KEY")
 
     client = OpsGenie(config)
 
