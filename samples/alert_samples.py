@@ -6,6 +6,7 @@ from opsgenie.swagger_client import AlertApi
 from opsgenie.swagger_client import configuration
 from opsgenie.swagger_client.models import *
 from opsgenie.swagger_client.rest import ApiException
+import time
 
 REQUEST_ID = "YOUR_REQUEST_ID"
 API_KEY = "YOUR_API_KEY"
@@ -146,6 +147,49 @@ def list_alerts():
         response = AlertApi().list_alerts(
             limit=25,
             query='status: open',
+            order='desc',
+            sort='createdAt')
+
+        # Refer to ListAlertsResponse for more detailed data
+        print('request id: {}'.format(response.request_id))
+        print('took: {}'.format(response.took))
+        for alert_response in response.data:
+            print('alert_response.id: {}'.format(alert_response.id))
+            print('alert_response.tiny_id: {}'.format(alert_response.tiny_id))
+            print('alert_response.alias: {}'.format(alert_response.alias))
+            print('alert_response.message: {}'.format(alert_response.message))
+            print('alert_response.status: {}'.format(alert_response.status))
+            print('alert_response.acknowledged: {}'.format(alert_response.acknowledged))
+            print('alert_response.is_seen: {}'.format(alert_response.is_seen))
+            print('alert_response.tags: {}'.format(alert_response.tags))
+            print('alert_response.snoozed: {}'.format(alert_response.snoozed))
+            print('alert_response.snoozed_until: {}'.format(alert_response.snoozed_until))
+            print('alert_response.count: {}'.format(alert_response.count))
+            print('alert_response.last_occurred_at: {}'.format(alert_response.last_occurred_at))
+            print('alert_response.created_at: {}'.format(alert_response.created_at))
+            print('alert_response.updated_at: {}'.format(alert_response.updated_at))
+            print('alert_response.source: {}'.format(alert_response.source))
+            print('alert_response.owner: {}'.format(alert_response.owner))
+            print('alert_response.priority: {}'.format(alert_response.priority))
+            print('alert_response.teams: {}'.format(alert_response.teams))
+            print('alert_response.integration: {}'.format(alert_response.integration))
+            print('alert_response.report: {}'.format(alert_response.report))
+    except ApiException as err:
+        print("Exception when calling AlertApi->list_alerts: %s\n" % err)
+
+
+def list_open_alerts_since_one_week():
+    setup_opsgenie_client()
+
+    try:
+        current_time_in_seconds = int(round(time.time()))
+        one_week_in_seconds = 7 * 24 * 60 * 60
+
+        # Default identifier_type is id
+        response = AlertApi().list_alerts(
+            limit=25,
+            query='createdAt<%d AND createdAt>%d AND status: open'
+                  % (current_time_in_seconds, (current_time_in_seconds - one_week_in_seconds)),
             order='desc',
             sort='createdAt')
 
