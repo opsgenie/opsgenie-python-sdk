@@ -1,0 +1,24 @@
+{{#hasAuthMethods}}
+{{#authMethods}}
+configuration = {{{packageName}}}.Configuration()
+{{#isBasic}}
+{{^isBasicBearer}}
+# Configure HTTP basic authorization: {{{name}}}
+configuration.username = 'YOUR_USERNAME'
+configuration.password = 'YOUR_PASSWORD'
+{{/isBasicBearer}}
+{{#isBasicBearer}}
+# Configure Bearer authorization{{#bearerFormat}} ({{{.}}}){{/bearerFormat}}: {{{name}}}
+configuration.access_token = 'YOUR_BEARER_TOKEN'
+{{/isBasicBearer}}
+{{/isBasic}}
+{{#isApiKey}}
+# Configure API key authorization: {{{name}}}
+configuration.api_key['{{{keyParamName}}}'] = 'YOUR_API_KEY'
+{{/isApiKey}}
+{{#isOAuth}}
+# Configure OAuth2 access token for authorization: {{{name}}}
+configuration.access_token = 'YOUR_ACCESS_TOKEN'
+{{/isOAuth}}
+{{/authMethods}}
+{{/hasAuthMethods}}

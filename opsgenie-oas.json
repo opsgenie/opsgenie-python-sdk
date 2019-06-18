@@ -1,0 +1,6146 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "OpsGenie REST API",
+    "description": "OpsGenie OpenAPI Specification",
+    "version": "2.0.0"
+  },
+  "host": "api.opsgenie.com",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "securityDefinitions": {
+    "GenieKey": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "GenieKey": []
+    }
+  ],
+  "paths": {
+    "/v2/alerts/requests/{requestId}": {
+      "get": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Get Request Status of Alert",
+        "description": "Used to track the status and alert details (if any) of the request whose identifier is given",
+        "operationId": "getRequestStatus",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-get-request-status"
+        },
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "description": "Universally unique identifier of the questioned request",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request status information for given id",
+            "schema": {
+              "$ref": "#/definitions/GetRequestStatusResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts": {
+      "get": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "List Alerts",
+        "description": "Returns list of alerts",
+        "operationId": "listAlerts",
+        "x-collapse-params": "ListAlertsRequest",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-list-alerts"
+        },
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "Search query to apply while filtering the alerts",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "searchIdentifier",
+            "in": "query",
+            "description": "Identifier of the saved search query to apply while filtering the alerts",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "searchIdentifierType",
+            "in": "query",
+            "description": "Identifier type of the saved search query. Possible values are 'id', or 'name'",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "id",
+              "name"
+            ],
+            "default": "id"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Start index of the result set (to apply pagination). Minimum value (and also default value) is 0",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of items to provide in the result. Must be a positive integer value. Default value is 20 and maximum value is 100",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1,
+            "maximum": 100
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Name of the field that result set will be sorted by",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "createdAt",
+              "updatedAt",
+              "tinyId",
+              "alias",
+              "message",
+              "status",
+              "acknowledged",
+              "isSeen",
+              "snoozed",
+              "snoozedUntil",
+              "count",
+              "lastOccurredAt",
+              "source",
+              "owner",
+              "integration.name",
+              "integration.type",
+              "report.ackTime",
+              "report.closeTime",
+              "report.acknowledgedBy",
+              "report.closedBy"
+            ],
+            "default": "createdAt"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "Sorting order of the result set",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "default": "desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of alert informations",
+            "schema": {
+              "$ref": "#/definitions/ListAlertsResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              },
+              "X-Paging-Prev": {
+                "description": "Previous page url",
+                "type": "string"
+              },
+              "X-Paging-Next": {
+                "description": "Next page url",
+                "type": "string"
+              },
+              "X-Paging-First": {
+                "description": "First page url",
+                "type": "string"
+              },
+              "X-Paging-Last": {
+                "description": "Last page url",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Create Alert",
+        "description": "Creates a new alert",
+        "operationId": "createAlert",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-create-alert"
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of created alert",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateAlertPayload"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}": {
+      "get": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Get Alert",
+        "description": "Returns alert with given id, tiny id or alias",
+        "operationId": "getAlert",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-get-alert"
+        },
+        "x-collapse-params": "GetAlertRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Alert information for given identifier",
+            "schema": {
+              "$ref": "#/definitions/GetAlertResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Delete Alert",
+        "description": "Deletes an alert using alert id, tiny id or alias",
+        "operationId": "deleteAlert",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-delete-alert"
+        },
+        "x-collapse-params": "DeleteAlertRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "$ref": "#/parameters/AlertUserParam"
+          },
+          {
+            "$ref": "#/parameters/AlertSourceParam"
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/acknowledge": {
+      "post": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Acknowledge Alert",
+        "description": "Acknowledges alert with given identifier",
+        "operationId": "acknowledgeAlert",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-acknowledge-alert"
+        },
+        "x-collapse-params": "AcknowledgeAlertRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of acknowledging alert action",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/AcknowledgeAlertPayload"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/unacknowledge": {
+      "post": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "UnAcknowledge Alert",
+        "description": "UnAcknowledge alert with given identifier",
+        "operationId": "unAcknowledgeAlert",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-unacknowledge-alert"
+        },
+        "x-collapse-params": "UnAcknowledgeAlertRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of unacknowledging alert action",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/UnAcknowledgeAlertPayload"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/close": {
+      "post": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Close Alert",
+        "description": "Closes alert with given identifier",
+        "operationId": "closeAlert",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-close-alert"
+        },
+        "x-collapse-params": "CloseAlertRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of closing alert action",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/CloseAlertPayload"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/snooze": {
+      "post": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Snooze Alert",
+        "description": "Snooze alert with given identifier",
+        "operationId": "snoozeAlert",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-snooze-alert"
+        },
+        "x-collapse-params": "SnoozeAlertRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of snoozing alert action",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SnoozeAlertPayload"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/escalate": {
+      "post": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Escalate Alert",
+        "description": "Escalate alert with given identifier",
+        "operationId": "escalateAlert",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-escalate-alert-to-next"
+        },
+        "x-collapse-params": "EscalateAlertRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of escalating alert action",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EscalateAlertToNextPayload"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/assign": {
+      "post": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Assign Alert",
+        "description": "Assign alert with given identifier",
+        "operationId": "assignAlert",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-assign-alert"
+        },
+        "x-collapse-params": "AssignAlertRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of assigning alert action",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AssignAlertPayload"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/responders": {
+      "post": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Add Responder",
+        "description": "Add responder to alert with given identifier",
+        "operationId": "addResponder",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-add-responder-to-alert"
+        },
+        "x-collapse-params": "AddResponderToAlertRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of adding responder to alert action",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddResponderToAlertPayload"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/teams": {
+      "post": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Add Team",
+        "description": "Add team to alert with given identifier",
+        "operationId": "addTeam",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-add-team-to-alert"
+        },
+        "x-collapse-params": "AddTeamToAlertRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of adding team to alert action",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddTeamToAlertPayload"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/actions/{actionName}": {
+      "post": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Custom Alert Action",
+        "description": "Custom actions for the alert",
+        "operationId": "executeCustomAlertAction",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-execute-custom-action"
+        },
+        "x-collapse-params": "ExecuteCustomAlertActionRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "name": "actionName",
+            "in": "path",
+            "description": "Name of the action to execute",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of executing custom alert action",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/ExecuteCustomAlertActionPayload"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/recipients": {
+      "get": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "List Alert Recipients",
+        "description": "List alert recipients for the given alert identifier",
+        "operationId": "listRecipients",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-list-alert-recipients"
+        },
+        "x-collapse-params": "ListAlertRecipientsRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns alert recipients for the given alert identifier",
+            "schema": {
+              "$ref": "#/definitions/ListAlertRecipientsResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/logs": {
+      "get": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "List Alert Logs",
+        "description": "List alert logs for the given alert identifier",
+        "operationId": "listLogs",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-list-alert-logs"
+        },
+        "x-collapse-params": "ListAlertLogsRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "$ref": "#/parameters/OffsetParam"
+          },
+          {
+            "$ref": "#/parameters/PageDirectionParam"
+          },
+          {
+            "$ref": "#/parameters/AlertLimitParam"
+          },
+          {
+            "$ref": "#/parameters/OrderParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns alert logs for the given alert identifier",
+            "schema": {
+              "$ref": "#/definitions/ListAlertLogsResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              },
+              "X-Paging-Next": {
+                "description": "Next page url",
+                "type": "string"
+              },
+              "X-Paging-First": {
+                "description": "First page url",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/attachments": {
+      "get": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "List Alert Attachments",
+        "description": "List alert attachment names and urls for related alert",
+        "operationId": "listAttachments",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-list-alert-attachments"
+        },
+        "x-collapse-params": "ListAlertAttachmentsRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType2"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns name and url for given identifier",
+            "schema": {
+              "$ref": "#/definitions/ListAlertAttachmentsResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Add Alert Attachment",
+        "description": "Add Alert Attachment to related alert",
+        "operationId": "addAttachment",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-create-alert-attachment"
+        },
+        "x-collapse-params": "AddAttachmentToAlertRequest",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType2"
+          },
+          {
+            "name": "file",
+            "in": "formData",
+            "required": true,
+            "description": "Attachment file to be uploaded",
+            "type": "file"
+          },
+          {
+            "name": "user",
+            "in": "formData",
+            "description": "Display name of the request owner",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "indexFile",
+            "in": "formData",
+            "description": "Name of html file which will be shown when attachment clicked on UI",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Returns attachment id",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "description": "Corrupted file",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/attachments/{attachmentId}": {
+      "get": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Get Alert Attachment",
+        "description": "Get alert attachment name and url for the given identifier",
+        "operationId": "getAttachment",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-get-alert-attachment"
+        },
+        "x-collapse-params": "GetAlertAttachmentRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType2"
+          },
+          {
+            "name": "attachmentId",
+            "in": "path",
+            "description": "Identifier of alert attachment",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns name and url for given identifier",
+            "schema": {
+              "$ref": "#/definitions/GetAlertAttachmentResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Remove Alert Attachment",
+        "description": "Remove alert attachment for the given identifier",
+        "operationId": "removeAttachment",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-delete-alert-attachment"
+        },
+        "x-collapse-params": "RemoveAttachmentFromAlertRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType2"
+          },
+          {
+            "name": "attachmentId",
+            "in": "path",
+            "description": "Identifier of alert attachment",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "$ref": "#/parameters/AlertUserParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns deleted messsage for this async operation.",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/tags": {
+      "post": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Add Tags",
+        "description": "Add tags to the alert with given identifier",
+        "operationId": "addTags",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-add-tags-to-alert"
+        },
+        "x-collapse-params": "AddTagsToAlertRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of creating alert tags action",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddTagsToAlertPayload"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Remove Tags",
+        "description": "Remove tags of the alert with given identifier",
+        "operationId": "removeTags",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-remove-tags-from-alert"
+        },
+        "x-collapse-params": "RemoveTagsFromAlertRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "$ref": "#/parameters/AlertUserParam"
+          },
+          {
+            "$ref": "#/parameters/AlertNoteParam"
+          },
+          {
+            "$ref": "#/parameters/AlertSourceParam"
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "description": "Tags field of the given alert as comma seperated values (e.g. 'tag1, tag2')",
+            "required": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "csv"
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/details": {
+      "post": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Add Details",
+        "description": "Add details to the alert with given identifier",
+        "operationId": "addDetails",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-add-details-custom-properties-to-alert"
+        },
+        "x-collapse-params": "AddDetailsToAlertRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of adding alert details action",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddDetailsToAlertPayload"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Remove Details",
+        "description": "Remove details of the alert with given identifier",
+        "operationId": "removeDetails",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-remove-details-custom-properties-from-alert"
+        },
+        "x-collapse-params": "RemoveDetailsFromAlertRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "$ref": "#/parameters/AlertUserParam"
+          },
+          {
+            "$ref": "#/parameters/AlertNoteParam"
+          },
+          {
+            "$ref": "#/parameters/AlertSourceParam"
+          },
+          {
+            "name": "keys",
+            "in": "query",
+            "description": "Comma separated list of keys to remove from the custom properties of the alert (e.g. 'key1,key2')",
+            "required": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "csv"
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/notes": {
+      "get": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "List Alert Notes",
+        "description": "List alert notes for the given alert identifier",
+        "operationId": "listNotes",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-list-alert-notes"
+        },
+        "x-collapse-params": "ListAlertNotesRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "$ref": "#/parameters/OffsetParam"
+          },
+          {
+            "$ref": "#/parameters/PageDirectionParam"
+          },
+          {
+            "$ref": "#/parameters/AlertLimitParam"
+          },
+          {
+            "$ref": "#/parameters/OrderParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns alert notes for the given alert identifier",
+            "schema": {
+              "$ref": "#/definitions/ListAlertNotesResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              },
+              "X-Paging-Next": {
+                "description": "Next page url",
+                "type": "string"
+              },
+              "X-Paging-First": {
+                "description": "First page url",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Add Note",
+        "description": "Adds note to alert with given identifier",
+        "operationId": "addNote",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-add-note-to-alert"
+        },
+        "x-collapse-params": "AddNoteToAlertRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of adding note to alert action",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddNoteToAlertPayload"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/saved-searches": {
+      "get": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Lists Saved Searches",
+        "description": "List all saved searches",
+        "operationId": "listSavedSearches",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-list-saved-searches"
+        },
+        "responses": {
+          "200": {
+            "description": "Returns saved search list",
+            "schema": {
+              "$ref": "#/definitions/ListSavedSearchesResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Create Saved Search",
+        "description": "Create saved search with given fields",
+        "operationId": "createSavedSearches",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-create-a-saved-search"
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of creating saved search",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateSavedSearchPayload"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Returns saved search meta information",
+            "schema": {
+              "$ref": "#/definitions/CreateSavedSearchResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/saved-searches/{identifier}": {
+      "get": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Get Saved Search",
+        "description": "Get saved search for the given search identifier",
+        "operationId": "getSavedSearch",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/alert-api#section-get-saved-search"
+        },
+        "x-collapse-params": "GetSavedSearchRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/SearchIdentifier"
+          },
+          {
+            "$ref": "#/parameters/SearchIdentifierType"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns saved search for given identifier",
+            "schema": {
+              "$ref": "#/definitions/GetSavedSearchResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Delete Saved Search",
+        "description": "Deletes saved search using given search identifier",
+        "operationId": "deleteSavedSearch",
+        "x-collapse-params": "DeleteSavedSearchRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/SearchIdentifier"
+          },
+          {
+            "$ref": "#/parameters/SearchIdentifierType"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Ok"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Update Saved Search",
+        "description": "Update saved search for the given search identifier",
+        "operationId": "updateSavedSearch",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://docs.opsgenie.com/docs/alert-api-continued#section-update-saved-search"
+        },
+        "x-collapse-params": "UpdateSavedSearchRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/SearchIdentifier"
+          },
+          {
+            "$ref": "#/parameters/SearchIdentifierType"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of updating saved search",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateSavedSearchPayload"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns saved search for given identifier",
+            "schema": {
+              "$ref": "#/definitions/GetSavedSearchResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/count": {
+      "get": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Count Alerts",
+        "description": "Count alerts in Opsgenie",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://docs.opsgenie.com/docs/alert-api#section-count-alerts"
+        },
+        "operationId": "countAlerts",
+        "x-collapse-params": "GetCountAlertsRequest",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "Search query to apply while filtering the alerts",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "searchIdentifier",
+            "in": "query",
+            "description": "Identifier of the saved search query to apply while filtering the alerts",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "searchIdentifierType",
+            "in": "query",
+            "description": "Identifier type of the saved search query. Possible values are id and name. Default value is id. If searchIdentifier is not provided, this value is ignored.",
+            "type": "string",
+            "default": "id",
+            "enum": [
+              "id",
+              "name"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns saved search for given identifier",
+            "schema": {
+              "$ref": "#/definitions/GetCountAlertsResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/message": {
+      "put": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Update Alert Message",
+        "description": "Update the message of the alert with given identifier",
+        "operationId": "updateAlertMessage",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://docs.opsgenie.com/docs/alert-api-continued#section-update-alert-message"
+        },
+        "x-collapse-params": "UpdateAlertMessageRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of update alert message",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateAlertMessagePayload"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/description": {
+      "put": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Update Alert Description",
+        "description": "Update the description of the alert with given identifier",
+        "operationId": "updateAlertDescription",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://docs.opsgenie.com/docs/alert-api-continued#section-update-alert-description"
+        },
+        "x-collapse-params": "UpdateAlertDescriptionRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of update alert description",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateAlertDescriptionPayload"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/alerts/{identifier}/priority": {
+      "put": {
+        "tags": [
+          "alert"
+        ],
+        "summary": "Update Alert Priority",
+        "description": "Update the priority of the alert with given identifier",
+        "operationId": "updateAlertPriority",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://docs.opsgenie.com/docs/alert-api-continued#section-update-alert-priority"
+        },
+        "x-collapse-params": "UpdateAlertPriorityRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/AlertIdentifier"
+          },
+          {
+            "$ref": "#/parameters/AlertIdentifierType"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of update alert priority",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateAlertPriorityPayload"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/heartbeats/{name}/ping": {
+      "get": {
+        "tags": [
+          "heartbeat"
+        ],
+        "summary": "Ping Heartbeat",
+        "description": "Ping Heartbeat for given heartbeat name",
+        "operationId": "ping",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/heartbeat-api#section-ping-heartbeat-request"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/HeartbeatName"
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/heartbeats": {
+      "get": {
+        "tags": [
+          "heartbeat"
+        ],
+        "summary": "List Heartbeats",
+        "description": "Returns list of Heartbeats",
+        "operationId": "listHeartBeats",
+        "x-collapse-params": "ListHeartBeatRequest",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://docs.opsgenie.com/docs/heartbeat-api#section-list-heartbeats"
+        },
+        "responses": {
+          "200": {
+            "description": "List of heartbeat informations",
+            "schema": {
+              "$ref": "#/definitions/ListHeartbeatResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              },
+              "X-Paging-Prev": {
+                "description": "Previous page url",
+                "type": "string"
+              },
+              "X-Paging-Next": {
+                "description": "Next page url",
+                "type": "string"
+              },
+              "X-Paging-First": {
+                "description": "First page url",
+                "type": "string"
+              },
+              "X-Paging-Last": {
+                "description": "Last page url",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "heartbeat"
+        ],
+        "summary": "Create Heartbeat",
+        "description": "Create a new heartbeat",
+        "operationId": "createHeartbeat",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/heartbeat-api#section-add-heartbeat-request"
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of created heartbeat",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateHeartbeatPayload"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Heartbeat information for created heartbeat name",
+            "schema": {
+              "$ref": "#/definitions/CreateHeartbeatResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/heartbeats/{name}": {
+      "get": {
+        "tags": [
+          "heartbeat"
+        ],
+        "summary": "Get Heartbeat",
+        "description": "Returns heartbeat with given name",
+        "operationId": "getHeartbeat",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/heartbeat-api#section-get-heartbeat-request"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/HeartbeatName"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Heartbeat information for given heartbeat name",
+            "schema": {
+              "$ref": "#/definitions/GetHeartbeatResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "heartbeat"
+        ],
+        "summary": "Update Heartbeat (Partial)",
+        "description": "Update Heartbeatwith given name",
+        "operationId": "updateHeartbeat",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/heartbeat-api#section-update-heartbeat-request-partial"
+        },
+        "x-collapse-params": "UpdateHeartbeatRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/HeartbeatName"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of update heartbeat action",
+            "schema": {
+              "$ref": "#/definitions/UpdateHeartbeatPayload"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Heartbeat meta information for given heartbeat name",
+            "schema": {
+              "$ref": "#/definitions/UpdateHeartbeatResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "heartbeat"
+        ],
+        "summary": "Delete Heartbeat",
+        "description": "Delete heartbeat with given name",
+        "operationId": "deleteHeartbeat",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/heartbeat-api#section-delete-heartbeat-request"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/HeartbeatName"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Ok"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/heartbeats/{name}/enable": {
+      "post": {
+        "tags": [
+          "heartbeat"
+        ],
+        "summary": "Enable Heartbeat",
+        "description": "Enable heartbeat request with given name",
+        "operationId": "enableHeartbeat",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/heartbeat-api#section-enable-heartbeat-request"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/HeartbeatName"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Heartbeat meta information for given heartbeat name",
+            "schema": {
+              "$ref": "#/definitions/EnableHeartbeatResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/heartbeats/{name}/disable": {
+      "post": {
+        "tags": [
+          "heartbeat"
+        ],
+        "summary": "Disable Heartbeat",
+        "description": "Disable heartbeat request with given name",
+        "operationId": "disableHeartbeat",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/heartbeat-api#section-disable-heartbeat-request"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/HeartbeatName"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Heartbeat meta information for given heartbeat name",
+            "schema": {
+              "$ref": "#/definitions/DisableHeartbeatResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v2/account": {
+      "get": {
+        "tags": [
+          "account"
+        ],
+        "summary": "Get Account Info",
+        "description": "Used to search and retrieve account information in OpsGenie",
+        "operationId": "getInfo",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://www.opsgenie.com/docs/account-api#section-get-account-info"
+        },
+        "responses": {
+          "200": {
+            "description": "Request status information for given id",
+            "schema": {
+              "$ref": "#/definitions/GetAccountInfoResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v1/incidents/requests/{requestId}": {
+      "get": {
+        "tags": [
+          "incident"
+        ],
+        "summary": "Get Request Status of Incident",
+        "description": "Used to track the status and incident details (if any) of the request whose identifier is given",
+        "operationId": "getIncidentRequestStatus",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://docs.opsgenie.com/docs/incident-api#section-get-request-status"
+        },
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "description": "Universally unique identifier of the questioned request",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request status information for given id",
+            "schema": {
+              "$ref": "#/definitions/GetIncidentRequestStatusResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v1/incidents/create": {
+      "post": {
+        "tags": [
+          "incident"
+        ],
+        "summary": "Create Incident",
+        "description": "Creates a new incident",
+        "operationId": "createIncident",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://docs.opsgenie.com/docs/incident-api#section-create-incident"
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of created incident",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateIncidentPayload"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v1/incidents/{identifier}": {
+      "get": {
+        "tags": [
+          "incident"
+        ],
+        "summary": "Get Incident",
+        "description": "Returns incident with given id, tiny id or alias",
+        "operationId": "getIncident",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://docs.opsgenie.com/docs/incident-api#section-get-incident"
+        },
+        "x-collapse-params": "GetIncidentRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/IncidentIdentifier"
+          },
+          {
+            "$ref": "#/parameters/IncidentIdentifierType"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Incident information for given identifier",
+            "schema": {
+              "$ref": "#/definitions/GetIncidentResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "incident"
+        ],
+        "summary": "Delete Incident",
+        "description": "Deletes an incident using incident id or the tiny id",
+        "operationId": "deleteIncident",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://docs.opsgenie.com/docs/incident-api#section-delete-incident"
+        },
+        "x-collapse-params": "DeleteIncidentRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/IncidentIdentifier"
+          },
+          {
+            "$ref": "#/parameters/IncidentIdentifierType"
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v1/incidents/": {
+      "get": {
+        "tags": [
+          "incident"
+        ],
+        "summary": "List incidents",
+        "description": "Return list of incidents",
+        "operationId": "ListIncidents",
+        "x-collapse-params": "ListIncidentsRequest",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://docs.opsgenie.com/docs/incident-api#section-list-incidents"
+        },
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "Search query to apply while filtering the incidents.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Start index of the result set (to apply pagination). Minimum value (and also default value) is 0.",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of items to provide in the result. Must be a positive integer value. Default value is 20 and maximum value is 100",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1,
+            "maximum": 100
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Name of the field that result set will be sorted by",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "createdAt",
+              "tinyId",
+              "message",
+              "status",
+              "isSeen",
+              "owner"
+            ],
+            "default": "createdAt"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "Sorting order of the result set",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "default": "desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of incident informations",
+            "schema": {
+              "$ref": "#/definitions/ListIncidentsResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "description": "Id of given request",
+                "type": "string"
+              },
+              "X-Response-Time": {
+                "description": "Process time of given request",
+                "type": "string"
+              },
+              "X-RateLimit-State": {
+                "description": "Status of rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Reason": {
+                "description": "Source of the rate limit",
+                "type": "string"
+              },
+              "X-RateLimit-Period-In-Sec": {
+                "description": "Time of throttle in seconds",
+                "type": "string"
+              },
+              "X-Paging-Prev": {
+                "description": "Previous page url",
+                "type": "string"
+              },
+              "X-Paging-Next": {
+                "description": "Next page url",
+                "type": "string"
+              },
+              "X-Paging-First": {
+                "description": "First page url",
+                "type": "string"
+              },
+              "X-Paging-Last": {
+                "description": "Last page url",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    },
+    "/v1/incidents/{identifier}/close": {
+      "post": {
+        "tags": [
+          "incident"
+        ],
+        "summary": "Close Incident",
+        "description": "Closes incident with given identifier",
+        "operationId": "closeIncident",
+        "externalDocs": {
+          "description": "For more information",
+          "url": "https://docs.opsgenie.com/docs/incident-api#section-close-incident"
+        },
+        "x-collapse-params": "CloseIncidentRequest",
+        "parameters": [
+          {
+            "$ref": "#/parameters/IncidentIdentifier"
+          },
+          {
+            "$ref": "#/parameters/IncidentIdentifierType"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Request payload of closing incident action",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/CloseIncidentPayload"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/responses/UnprocessableEntity"
+          },
+          "429": {
+            "$ref": "#/responses/TooManyRequest"
+          },
+          "default": {
+            "$ref": "#/responses/GeneralError"
+          }
+        }
+      }
+    }
+  },
+  "parameters": {
+    "OrderParam": {
+      "name": "order",
+      "in": "query",
+      "description": "Sorting order of the result set",
+      "required": false,
+      "type": "string",
+      "enum": [
+        "asc",
+        "desc"
+      ],
+      "default": "desc"
+    },
+    "AlertIdentifier": {
+      "name": "identifier",
+      "in": "path",
+      "description": "Identifier of alert which could be alert id, tiny id or alert alias",
+      "required": true,
+      "type": "string"
+    },
+    "AlertIdentifierType": {
+      "name": "identifierType",
+      "in": "query",
+      "description": "Type of the identifier that is provided as an in-line parameter. Possible values are 'id', 'alias' or 'tiny'",
+      "required": false,
+      "type": "string",
+      "enum": [
+        "id",
+        "alias",
+        "tiny"
+      ],
+      "default": "id"
+    },
+    "AlertSourceParam": {
+      "name": "source",
+      "in": "query",
+      "description": "Display name of the request source",
+      "required": false,
+      "type": "string"
+    },
+    "AlertUserParam": {
+      "name": "user",
+      "in": "query",
+      "description": "Display name of the request owner",
+      "required": false,
+      "type": "string"
+    },
+    "AlertNoteParam": {
+      "name": "note",
+      "in": "query",
+      "description": "Additional alert note to add",
+      "required": false,
+      "type": "string"
+    },
+    "OffsetParam": {
+      "name": "offset",
+      "in": "query",
+      "description": "Starting value of the offset property",
+      "required": false,
+      "type": "string"
+    },
+    "PageDirectionParam": {
+      "name": "direction",
+      "in": "query",
+      "description": "Page direction to apply for the given offset with 'next' and 'prev'",
+      "required": false,
+      "type": "string",
+      "enum": [
+        "next",
+        "prev"
+      ],
+      "default": "next"
+    },
+    "AlertLimitParam": {
+      "name": "limit",
+      "in": "query",
+      "description": "Maximum number of items to provide in the result. Must be a positive integer value. Default value is 20 and maximum value is 100",
+      "required": false,
+      "type": "integer",
+      "format": "int32",
+      "minimum": 1,
+      "maximum": 100
+    },
+    "SearchIdentifier": {
+      "name": "identifier",
+      "in": "path",
+      "description": "Identifier of the saved search which could be 'id' or 'name'",
+      "required": true,
+      "type": "string"
+    },
+    "SearchIdentifierType": {
+      "name": "identifierType",
+      "in": "query",
+      "description": "Type of the identifier that is provided as an in-line parameter. Possible values are 'id', or 'name'",
+      "required": false,
+      "type": "string",
+      "enum": [
+        "id",
+        "name"
+      ],
+      "default": "id"
+    },
+    "AlertIdentifierType2": {
+      "name": "alertIdentifierType",
+      "in": "query",
+      "description": "Type of the identifier that is provided as an in-line parameter. Possible values are 'id', 'alias' or 'tiny'",
+      "required": false,
+      "type": "string",
+      "enum": [
+        "id",
+        "alias",
+        "tiny"
+      ],
+      "default": "id"
+    },
+    "HeartbeatName": {
+      "name": "name",
+      "in": "path",
+      "description": "Name of the heartbeat",
+      "required": true,
+      "type": "string"
+    },
+    "IncidentIdentifier": {
+      "name": "identifier",
+      "in": "path",
+      "description": "Identifier of incident which could be incident id or tiny id",
+      "required": true,
+      "type": "string"
+    },
+    "IncidentIdentifierType": {
+      "name": "identifierType",
+      "in": "query",
+      "description": "Type of the identifier that is provided as an in-line parameter. Possible values are 'id' or 'tiny. Default is id'",
+      "required": false,
+      "type": "string",
+      "enum": [
+        "id",
+        "tiny"
+      ],
+      "default": "id"
+    }
+  },
+  "responses": {
+    "Ok": {
+      "description": "Returns request id for this async operation.",
+      "schema": {
+        "$ref": "#/definitions/SuccessResponse"
+      },
+      "headers": {
+        "X-Request-ID": {
+          "description": "Id of given request",
+          "type": "string"
+        },
+        "X-Response-Time": {
+          "description": "Process time of given request",
+          "type": "string"
+        },
+        "X-RateLimit-State": {
+          "description": "Status of rate limit",
+          "type": "string"
+        },
+        "X-RateLimit-Reason": {
+          "description": "Source of the rate limit",
+          "type": "string"
+        },
+        "X-RateLimit-Period-In-Sec": {
+          "description": "Time of throttle in seconds",
+          "type": "string"
+        }
+      }
+    },
+    "Accepted": {
+      "description": "Returns request id for this async operation.",
+      "schema": {
+        "$ref": "#/definitions/SuccessResponse"
+      },
+      "headers": {
+        "X-Request-ID": {
+          "description": "Id of given request",
+          "type": "string"
+        },
+        "X-Response-Time": {
+          "description": "Process time of given request",
+          "type": "string"
+        },
+        "X-RateLimit-State": {
+          "description": "Status of rate limit",
+          "type": "string"
+        },
+        "X-RateLimit-Reason": {
+          "description": "Source of the rate limit",
+          "type": "string"
+        },
+        "X-RateLimit-Period-In-Sec": {
+          "description": "Time of throttle in seconds",
+          "type": "string"
+        }
+      }
+    },
+    "GeneralError": {
+      "description": "Unexpected error",
+      "schema": {
+        "$ref": "#/definitions/ErrorResponse"
+      }
+    },
+    "BadRequest": {
+      "description": "Invalid JSON body",
+      "schema": {
+        "$ref": "#/definitions/ErrorResponse"
+      },
+      "headers": {
+        "X-Request-ID": {
+          "description": "Id of given request",
+          "type": "string"
+        },
+        "X-Response-Time": {
+          "description": "Process time of given request",
+          "type": "string"
+        }
+      }
+    },
+    "Unauthorized": {
+      "description": "apiKey is invalid or integration is disabled",
+      "schema": {
+        "$ref": "#/definitions/ErrorResponse"
+      },
+      "headers": {
+        "X-Request-ID": {
+          "description": "Id of given request",
+          "type": "string"
+        },
+        "X-Response-Time": {
+          "description": "Process time of given request",
+          "type": "string"
+        }
+      }
+    },
+    "PaymentRequired": {
+      "description": "apiKey is valid but the account cannot do this action because of subscription plan",
+      "schema": {
+        "$ref": "#/definitions/ErrorResponse"
+      },
+      "headers": {
+        "X-Request-ID": {
+          "description": "Id of given request",
+          "type": "string"
+        },
+        "X-Response-Time": {
+          "description": "Process time of given request",
+          "type": "string"
+        }
+      }
+    },
+    "Forbidden": {
+      "description": "apiKey is valid but the apiKey cannot do this operation because of permissions",
+      "schema": {
+        "$ref": "#/definitions/ErrorResponse"
+      },
+      "headers": {
+        "X-Request-ID": {
+          "description": "Id of given request",
+          "type": "string"
+        },
+        "X-Response-Time": {
+          "description": "Process time of given request",
+          "type": "string"
+        }
+      }
+    },
+    "NotFound": {
+      "description": "Entity cannot be found for the given identifier",
+      "schema": {
+        "$ref": "#/definitions/ErrorResponse"
+      },
+      "headers": {
+        "X-Request-ID": {
+          "description": "Id of given request",
+          "type": "string"
+        },
+        "X-Response-Time": {
+          "description": "Process time of given request",
+          "type": "string"
+        }
+      }
+    },
+    "UnprocessableEntity": {
+      "description": "Semantic errors in request body",
+      "schema": {
+        "$ref": "#/definitions/ErrorResponse"
+      },
+      "headers": {
+        "X-Request-ID": {
+          "description": "Id of given request",
+          "type": "string"
+        },
+        "X-Response-Time": {
+          "description": "Process time of given request",
+          "type": "string"
+        }
+      }
+    },
+    "TooManyRequest": {
+      "description": "Throttling",
+      "schema": {
+        "$ref": "#/definitions/ErrorResponse"
+      },
+      "headers": {
+        "X-Request-ID": {
+          "description": "Id of given request",
+          "type": "string"
+        },
+        "X-Response-Time": {
+          "description": "Process time of given request",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "BaseResponse": {
+      "x-opsgenie-domain": "common",
+      "type": "object",
+      "required": [
+        "requestId",
+        "took"
+      ],
+      "properties": {
+        "requestId": {
+          "type": "string"
+        },
+        "took": {
+          "type": "number",
+          "format": "float",
+          "default": 0
+        }
+      }
+    },
+    "BaseResponseWithExpandable": {
+      "x-opsgenie-domain": "common",
+      "type": "object",
+      "required": [
+        "expandable"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "expandable": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ErrorResponse": {
+      "x-opsgenie-domain": "common",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "message": {
+              "type": "string"
+            },
+            "code": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "responseHeaders": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "SuccessResponse": {
+      "x-opsgenie-domain": "common",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "result": {
+              "type": "string"
+            },
+            "data": {
+              "$ref": "#/definitions/SuccessData"
+            }
+          }
+        }
+      ]
+    },
+    "SuccessData": {
+      "x-opsgenie-domain": "common",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "PageDetails": {
+      "x-opsgenie-domain": "common",
+      "type": "object",
+      "properties": {
+        "prev": {
+          "type": "string"
+        },
+        "next": {
+          "type": "string"
+        },
+        "first": {
+          "type": "string"
+        },
+        "last": {
+          "type": "string"
+        }
+      }
+    },
+    "Recipient": {
+      "x-opsgenie-domain": "common",
+      "type": "object",
+      "discriminator": "type",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "all",
+            "none",
+            "user",
+            "escalation",
+            "schedule",
+            "team",
+            "group"
+          ]
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "TeamRecipient": {
+      "x-opsgenie-domain": "common",
+      "x-discriminator-value": "team",
+      "description": "Team recipient",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Recipient"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "GroupRecipient": {
+      "x-opsgenie-domain": "common",
+      "x-discriminator-value": "group",
+      "description": "Group recipient",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Recipient"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "ScheduleRecipient": {
+      "x-opsgenie-domain": "common",
+      "x-discriminator-value": "schedule",
+      "description": "Schedule recipient",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Recipient"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "EscalationRecipient": {
+      "x-opsgenie-domain": "common",
+      "x-discriminator-value": "escalation",
+      "description": "Escalation recipient",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Recipient"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "UserRecipient": {
+      "x-opsgenie-domain": "common",
+      "x-discriminator-value": "user",
+      "description": "User recipient",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Recipient"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "username": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "NoRecipient": {
+      "x-opsgenie-domain": "common",
+      "x-discriminator-value": "none",
+      "description": "No recipient",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Recipient"
+        }
+      ]
+    },
+    "AllRecipient": {
+      "x-opsgenie-domain": "common",
+      "x-discriminator-value": "all",
+      "description": "All recipient",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Recipient"
+        }
+      ]
+    },
+    "TimeRestrictionInterval": {
+      "x-opsgenie-domain": "common",
+      "type": "object",
+      "discriminator": "type",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "weekday-and-time-of-day",
+            "time-of-day"
+          ]
+        }
+      }
+    },
+    "WeekdayTimeRestrictionInterval": {
+      "x-opsgenie-domain": "common",
+      "type": "object",
+      "x-discriminator-value": "weekday-and-time-of-day",
+      "description": "Weekday time restriction interval",
+      "allOf": [
+        {
+          "$ref": "#/definitions/TimeRestrictionInterval"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "restrictions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/WeekdayTimeRestriction"
+              },
+              "minItems": 1,
+              "maxItems": 15
+            }
+          }
+        }
+      ]
+    },
+    "TimeOfDayRestrictionInterval": {
+      "x-opsgenie-domain": "common",
+      "type": "object",
+      "x-discriminator-value": "time-of-day",
+      "description": "Time of day restriction interval",
+      "allOf": [
+        {
+          "$ref": "#/definitions/TimeRestrictionInterval"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "restriction": {
+              "$ref": "#/definitions/TimeOfDayRestriction"
+            }
+          }
+        }
+      ]
+    },
+    "WeekdayTimeRestriction": {
+      "x-opsgenie-domain": "common",
+      "type": "object",
+      "properties": {
+        "startDay": {
+          "type": "string",
+          "enum": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday"
+          ]
+        },
+        "startHour": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "startMin": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "endDay": {
+          "type": "string",
+          "enum": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday"
+          ]
+        },
+        "endHour": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "endMin": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "TimeOfDayRestriction": {
+      "x-opsgenie-domain": "common",
+      "type": "object",
+      "properties": {
+        "startHour": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "startMin": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "endHour": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "endMin": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "Duration": {
+      "x-opsgenie-domain": "common",
+      "type": "object",
+      "required": [
+        "timeAmount"
+      ],
+      "properties": {
+        "timeAmount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "timeUnit": {
+          "type": "string",
+          "enum": [
+            "days",
+            "hours",
+            "minutes",
+            "seconds",
+            "miliseconds",
+            "micros",
+            "nanos"
+          ],
+          "default": "minutes"
+        }
+      }
+    },
+    "Filter": {
+      "x-opsgenie-domain": "common",
+      "type": "object",
+      "description": "Defines the conditions that will be checked before applying rules and type of the operations that will be applied on conditions",
+      "discriminator": "type",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "match-all",
+            "match-any-condition",
+            "match-all-conditions"
+          ]
+        }
+      }
+    },
+    "MatchAll": {
+      "x-opsgenie-domain": "common",
+      "x-discriminator-value": "match-all",
+      "description": "Match all filter",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Filter"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "MatchAllConditions": {
+      "x-opsgenie-domain": "common",
+      "x-discriminator-value": "match-all-conditions",
+      "description": "Match all conditions filter",
+      "required": [
+        "conditions"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/Filter"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "conditions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Condition"
+              },
+              "minItems": 1
+            }
+          }
+        }
+      ]
+    },
+    "MatchAnyCondition": {
+      "x-opsgenie-domain": "common",
+      "x-discriminator-value": "match-any-condition",
+      "description": "Match any condition filter",
+      "required": [
+        "conditions"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/Filter"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "conditions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Condition"
+              },
+              "minItems": 1
+            }
+          }
+        }
+      ]
+    },
+    "Condition": {
+      "x-opsgenie-domain": "common",
+      "type": "object",
+      "required": [
+        "field",
+        "operation"
+      ],
+      "properties": {
+        "field": {
+          "type": "string",
+          "description": "Specifies which alert field will be used in condition. Possible values are message, alias, description, source, entity, tags, actions, extra-properties, recipients or teams",
+          "enum": [
+            "message",
+            "alias",
+            "description",
+            "source",
+            "entity",
+            "tags",
+            "actions",
+            "extra-properties",
+            "recipients",
+            "teams",
+            "priority",
+            "details"
+          ]
+        },
+        "key": {
+          "type": "string",
+          "description": "If field is set as extra-properties, key could be used for key-value pair"
+        },
+        "not": {
+          "type": "boolean",
+          "description": "Indicates behaviour of the given operation. Default value is false"
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "matches",
+            "contains",
+            "starts-with",
+            "ends-with",
+            "equals",
+            "contains-key",
+            "contains-value",
+            "greater-than",
+            "less-than",
+            "is-empty",
+            "equals-ignore-whitespace"
+          ],
+          "description": "It is the operation that will be executed for the given field and key."
+        },
+        "expectedValue": {
+          "type": "string",
+          "description": "User defined value that will be compared with alert field according to the operation. Default value is empty string"
+        },
+        "order": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Order of the condition in conditions list"
+        }
+      }
+    },
+    "Responder": {
+      "x-opsgenie-domain": "common",
+      "type": "object",
+      "discriminator": "type",
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "user",
+            "team"
+          ]
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "UserResponder": {
+      "x-opsgenie-domain": "common",
+      "x-discriminator-value": "user",
+      "description": "User responder",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Responder"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "TeamResponder": {
+      "x-opsgenie-domain": "common",
+      "x-discriminator-value": "team",
+      "description": "Team responder",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Responder"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "AlertActionPayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "string",
+          "description": "Display name of the request owner"
+        },
+        "note": {
+          "type": "string",
+          "description": "Additional note that will be added while creating the alert"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source field of the alert. Default value is IP address of the incoming request"
+        }
+      }
+    },
+    "CreateAlertPayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AlertActionPayload"
+        },
+        {
+          "required": [
+            "message"
+          ],
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Message of the alert"
+            },
+            "alias": {
+              "type": "string",
+              "description": "Client-defined identifier of the alert, that is also the key element of alert deduplication."
+            },
+            "description": {
+              "type": "string",
+              "description": "Description field of the alert that is generally used to provide a detailed information about the alert."
+            },
+            "responders": {
+              "type": "array",
+              "description": "Responders that the alert will be routed to send notifications",
+              "items": {
+                "$ref": "#/definitions/Recipient"
+              }
+            },
+            "visibleTo": {
+              "type": "array",
+              "description": "Teams and users that the alert will become visible to without sending any notification",
+              "items": {
+                "$ref": "#/definitions/Recipient"
+              }
+            },
+            "actions": {
+              "type": "array",
+              "description": "Custom actions that will be available for the alert",
+              "items": {
+                "type": "string"
+              }
+            },
+            "tags": {
+              "type": "array",
+              "description": "Tags of the alert",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "description": "Map of key-value pairs to use as custom properties of the alert",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "entity": {
+              "type": "string",
+              "description": "Entity field of the alert that is generally used to specify which domain alert is related to"
+            },
+            "priority": {
+              "type": "string",
+              "description": "Priority level of the alert",
+              "enum": [
+                "P1",
+                "P2",
+                "P3",
+                "P4",
+                "P5"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "AcknowledgeAlertPayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AlertActionPayload"
+        }
+      ]
+    },
+    "UnAcknowledgeAlertPayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AlertActionPayload"
+        }
+      ]
+    },
+    "CloseAlertPayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AlertActionPayload"
+        }
+      ]
+    },
+    "SnoozeAlertPayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AlertActionPayload"
+        },
+        {
+          "required": [
+            "endTime"
+          ],
+          "properties": {
+            "endTime": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Date and time that snooze will lose effect"
+            }
+          }
+        }
+      ]
+    },
+    "EscalateAlertToNextPayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AlertActionPayload"
+        },
+        {
+          "required": [
+            "escalation"
+          ],
+          "properties": {
+            "escalation": {
+              "$ref": "#/definitions/EscalationRecipient"
+            }
+          }
+        }
+      ]
+    },
+    "AssignAlertPayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AlertActionPayload"
+        },
+        {
+          "required": [
+            "owner"
+          ],
+          "properties": {
+            "owner": {
+              "$ref": "#/definitions/UserRecipient"
+            }
+          }
+        }
+      ]
+    },
+    "AddTeamToAlertPayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AlertActionPayload"
+        },
+        {
+          "required": [
+            "team"
+          ],
+          "properties": {
+            "team": {
+              "$ref": "#/definitions/TeamRecipient"
+            }
+          }
+        }
+      ]
+    },
+    "AddResponderToAlertPayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AlertActionPayload"
+        },
+        {
+          "required": [
+            "responder"
+          ],
+          "properties": {
+            "responder": {
+              "$ref": "#/definitions/Recipient"
+            }
+          }
+        }
+      ]
+    },
+    "ExecuteCustomAlertActionPayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AlertActionPayload"
+        }
+      ]
+    },
+    "AddTagsToAlertPayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AlertActionPayload"
+        },
+        {
+          "required": [
+            "tags"
+          ],
+          "properties": {
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "AddDetailsToAlertPayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AlertActionPayload"
+        },
+        {
+          "required": [
+            "details"
+          ],
+          "properties": {
+            "details": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "description": "Key-value pairs to add as custom property into alert. You can refer here for example values"
+            }
+          }
+        }
+      ]
+    },
+    "AddNoteToAlertPayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "required": [
+        "note"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/AlertActionPayload"
+        }
+      ]
+    },
+    "CreateSavedSearchPayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "required": [
+        "name",
+        "query",
+        "owner"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 15000
+        },
+        "query": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "owner": {
+          "$ref": "#/definitions/UserRecipient"
+        },
+        "teams": {
+          "type": "array",
+          "maxItems": 20,
+          "description": "Teams that the alert will be routed to send notifications",
+          "items": {
+            "$ref": "#/definitions/TeamRecipient"
+          }
+        }
+      }
+    },
+    "UpdateSavedSearchPayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "required": [
+        "name",
+        "query",
+        "owner"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 15000
+        },
+        "query": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "owner": {
+          "$ref": "#/definitions/UserRecipient"
+        },
+        "teams": {
+          "type": "array",
+          "maxItems": 20,
+          "description": "Teams that the alert will be routed to send notifications",
+          "items": {
+            "$ref": "#/definitions/TeamRecipient"
+          }
+        }
+      }
+    },
+    "UpdateAlertPriorityPayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "required": [
+        "priority"
+      ],
+      "properties": {
+        "priority": {
+          "type": "string",
+          "description": "Priority level of the alert",
+          "enum": [
+            "P1",
+            "P2",
+            "P3",
+            "P4",
+            "P5"
+          ]
+        }
+      }
+    },
+    "UpdateAlertMessagePayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "message": {
+          "type": "string",
+          "description": "Message of the alert"
+        }
+      }
+    },
+    "UpdateAlertDescriptionPayload": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "required": [
+        "description"
+      ],
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Description of the alert"
+        }
+      }
+    },
+    "GetRequestStatusResponse": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/AlertRequestStatus"
+            }
+          }
+        }
+      ]
+    },
+    "ListAlertsResponse": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BaseAlert"
+              }
+            },
+            "paging": {
+              "$ref": "#/definitions/PageDetails"
+            }
+          }
+        }
+      ]
+    },
+    "GetAlertResponse": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/Alert"
+            }
+          }
+        }
+      ]
+    },
+    "ListAlertRecipientsResponse": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AlertRecipient"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ListAlertLogsResponse": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AlertLog"
+              }
+            },
+            "paging": {
+              "$ref": "#/definitions/AlertPaging"
+            }
+          }
+        }
+      ]
+    },
+    "ListAlertNotesResponse": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AlertNote"
+              }
+            },
+            "paging": {
+              "$ref": "#/definitions/AlertPaging"
+            }
+          }
+        }
+      ]
+    },
+    "ListSavedSearchesResponse": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SavedSearchMeta"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "CreateSavedSearchResponse": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/SavedSearchMeta"
+            }
+          }
+        }
+      ]
+    },
+    "GetSavedSearchResponse": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/SavedSearch"
+            }
+          }
+        }
+      ]
+    },
+    "ListAlertAttachmentsResponse": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AlertAttachmentMeta"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "GetAlertAttachmentResponse": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/AlertAttachment"
+            }
+          }
+        }
+      ]
+    },
+    "GetCountAlertsResponse": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "AlertRequestStatus": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "processedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "integrationId": {
+          "type": "string"
+        },
+        "isSuccess": {
+          "type": "boolean"
+        },
+        "status": {
+          "type": "string"
+        },
+        "alertId": {
+          "type": "string"
+        },
+        "alias": {
+          "type": "string"
+        }
+      }
+    },
+    "BaseAlert": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "tinyId": {
+          "type": "string"
+        },
+        "alias": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "acknowledged": {
+          "type": "boolean"
+        },
+        "isSeen": {
+          "type": "boolean"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "snoozed": {
+          "type": "boolean"
+        },
+        "snoozedUntil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "lastOccurredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "string"
+        },
+        "responders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Recipient"
+          }
+        },
+        "integration": {
+          "$ref": "#/definitions/AlertIntegration"
+        },
+        "report": {
+          "$ref": "#/definitions/AlertReport"
+        }
+      }
+    },
+    "AlertTeamMeta": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "AlertIntegration": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "AlertReport": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "properties": {
+        "ackTime": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "closeTime": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "acknowledgedBy": {
+          "type": "string"
+        },
+        "closedBy": {
+          "type": "string"
+        }
+      }
+    },
+    "Alert": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseAlert"
+        },
+        {
+          "properties": {
+            "actions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "entity": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "details": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "AlertRecipient": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/AlertUserMeta"
+        },
+        "state": {
+          "type": "string"
+        },
+        "method": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "AlertUserMeta": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "AlertLog": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "properties": {
+        "log": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "offset": {
+          "type": "string"
+        }
+      }
+    },
+    "AlertPaging": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "properties": {
+        "first": {
+          "type": "string"
+        },
+        "next": {
+          "type": "string"
+        }
+      }
+    },
+    "AlertNote": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "properties": {
+        "note": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "offset": {
+          "type": "string"
+        }
+      }
+    },
+    "SavedSearchMeta": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "SavedSearchEntity": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "SavedSearch": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "owner": {
+          "$ref": "#/definitions/SavedSearchEntity"
+        },
+        "teams": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SavedSearchEntity"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "query": {
+          "type": "string"
+        }
+      }
+    },
+    "AlertAttachmentMeta": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "AlertAttachment": {
+      "x-opsgenie-domain": "alert",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "CreateHeartbeatPayload": {
+      "x-opsgenie-domain": "heartbeat",
+      "type": "object",
+      "allOf": [
+        {
+          "required": [
+            "name",
+            "interval",
+            "intervalUnit",
+            "enabled"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the heartbeat",
+              "maxLength": 200
+            },
+            "description": {
+              "type": "string",
+              "description": "An optional description of the heartbeat",
+              "maxLength": 10000
+            },
+            "interval": {
+              "type": "integer",
+              "format": "int32",
+              "description": "Specifies how often a heartbeat message should be expected",
+              "minimum": 1
+            },
+            "intervalUnit": {
+              "type": "string",
+              "description": "Interval specified as 'minutes', 'hours' or 'days'",
+              "enum": [
+                "minutes",
+                "hours",
+                "days"
+              ]
+            },
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable/disable heartbeat monitoring"
+            },
+            "ownerTeam": {
+              "type": "object",
+              "description": "Owner team of the heartbeat, consisting id and/or name of the owner team",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                }
+              }
+            },
+            "alertMessage": {
+              "type": "string",
+              "description": "Specifies the alert message for heartbeat expiration alert. If this is not provided, default alert message is 'HeartbeatName is expired'",
+              "maxLength": 130
+            },
+            "alertTags": {
+              "type": "array",
+              "description": "Specifies the alert tags for heartbeat expiration alert",
+              "items": {
+                "type": "string",
+                "maxLength": 50
+              },
+              "maxItems": 20
+            },
+            "alertPriority": {
+              "type": "string",
+              "description": "Specifies the alert priority for heartbeat expiration alert. If this is not provided, default priority is P3",
+              "enum": [
+                "P1",
+                "P2",
+                "P3",
+                "P4",
+                "P5"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "UpdateHeartbeatPayload": {
+      "x-opsgenie-domain": "heartbeat",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "An optional description of the heartbeat",
+          "maxLength": 10000
+        },
+        "interval": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Specifies how often a heartbeat message should be expected",
+          "minimum": 1
+        },
+        "intervalUnit": {
+          "type": "string",
+          "description": "Interval specified as 'minutes', 'hours' or 'days'",
+          "enum": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable/disable heartbeat monitoring"
+        }
+      }
+    },
+    "CreateHeartbeatResponse": {
+      "x-opsgenie-domain": "heartbeat",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/Heartbeat"
+            }
+          }
+        }
+      ]
+    },
+    "GetHeartbeatResponse": {
+      "x-opsgenie-domain": "heartbeat",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/Heartbeat"
+            }
+          }
+        }
+      ]
+    },
+    "UpdateHeartbeatResponse": {
+      "x-opsgenie-domain": "heartbeat",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/HeartbeatMeta"
+            }
+          }
+        }
+      ]
+    },
+    "EnableHeartbeatResponse": {
+      "x-opsgenie-domain": "heartbeat",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/HeartbeatMeta"
+            }
+          }
+        }
+      ]
+    },
+    "DisableHeartbeatResponse": {
+      "x-opsgenie-domain": "heartbeat",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/HeartbeatMeta"
+            }
+          }
+        }
+      ]
+    },
+    "ListHeartbeatResponse": {
+      "x-opsgenie-domain": "heartbeat",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "heartbeats": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Heartbeat"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "Heartbeat": {
+      "x-opsgenie-domain": "heartbeat",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "interval": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "intervalUnit": {
+          "type": "string",
+          "enum": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        },
+        "expired": {
+          "type": "boolean"
+        },
+        "lastPingTime": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "HeartbeatMeta": {
+      "x-opsgenie-domain": "heartbeat",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "expired": {
+          "type": "boolean"
+        }
+      }
+    },
+    "GetAccountInfoResponse": {
+      "x-opsgenie-domain": "account",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/AccountInfo"
+            }
+          }
+        }
+      ]
+    },
+    "AccountInfo": {
+      "x-opsgenie-domain": "account",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "userCount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "plan": {
+          "$ref": "#/definitions/AccountPlan"
+        }
+      }
+    },
+    "AccountPlan": {
+      "x-opsgenie-domain": "account",
+      "type": "object",
+      "properties": {
+        "maxUserCount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "isYearly": {
+          "type": "boolean"
+        }
+      }
+    },
+    "StatusPageEntry": {
+      "x-opsgenie-domain": "incident",
+      "type": "object",
+      "allOf": [
+        {
+          "required": [
+            "title"
+          ]
+        },
+        {
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "The message to be added using status page into incident"
+            },
+            "details": {
+              "type": "string",
+              "description": "Description of the message being added via stats page into incident"
+            }
+          }
+        }
+      ]
+    },
+    "CreateIncidentPayload": {
+      "x-opsgenie-domain": "incident",
+      "type": "object",
+      "allOf": [
+        {
+          "required": [
+            "message",
+            "serviceId"
+          ]
+        },
+        {
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Message of the incident"
+            },
+            "description": {
+              "type": "string",
+              "description": "Description field of the incident that is generally used to provide a detailed information about the incident."
+            },
+            "responders": {
+              "type": "array",
+              "description": "Responders that the incident will be routed to send notifications",
+              "items": {
+                "$ref": "#/definitions/Recipient"
+              }
+            },
+            "tags": {
+              "type": "array",
+              "description": "Tags of the incident.",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "description": "Map of key-value pairs to use as custom properties of the incident",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "priority": {
+              "type": "string",
+              "description": "Priority level of the incident",
+              "enum": [
+                "P1",
+                "P2",
+                "P3",
+                "P4",
+                "P5"
+              ]
+            },
+            "note": {
+              "type": "string",
+              "description": "Additional note that will be added while creating the incident"
+            },
+            "serviceId": {
+              "type": "string",
+              "description": "Service on which incident will be created."
+            },
+            "statusPageEntry": {
+              "type": "object",
+              "description": "Status page entry fields. If this field is leaved blank, message and description of incident will be used for title and detail respectively.",
+              "additionalProperties": {
+                "$ref": "#/definitions/StatusPageEntry"
+              }
+            },
+            "notifyStakeholders": {
+              "type": "boolean",
+              "description": "Indicate whether stakeholders are notified or not. Default value is false."
+            }
+          }
+        }
+      ]
+    },
+    "IncidentActionPayload": {
+      "x-opsgenie-domain": "incident",
+      "type": "object",
+      "properties": {
+        "note": {
+          "type": "string",
+          "description": "Additional note that will be included with the incident"
+        }
+      }
+    },
+    "CloseIncidentPayload": {
+      "x-opsgenie-domain": "incident",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/IncidentActionPayload"
+        }
+      ]
+    },
+    "GetIncidentRequestStatusResponse": {
+      "x-opsgenie-domain": "incident",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/IncidentRequestStatus"
+            }
+          }
+        }
+      ]
+    },
+    "GetIncidentResponse": {
+      "x-opsgenie-domain": "incident",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/Incident"
+            }
+          }
+        }
+      ]
+    },
+    "ListIncidentsResponse": {
+      "x-opsgenie-domain": "incident",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseResponse"
+        },
+        {
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BaseIncident"
+              }
+            },
+            "paging": {
+              "$ref": "#/definitions/PageDetails"
+            }
+          }
+        }
+      ]
+    },
+    "IncidentRequestStatus": {
+      "x-opsgenie-domain": "incident",
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "action": {
+          "type": "string"
+        },
+        "processedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "integrationId": {
+          "type": "string"
+        },
+        "isSuccess": {
+          "type": "boolean"
+        },
+        "status": {
+          "type": "string"
+        },
+        "incidentId": {
+          "type": "string"
+        }
+      }
+    },
+    "Incident": {
+      "x-opsgenie-domain": "incident",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseIncident"
+        },
+        {
+          "properties": {
+            "requestId": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "BaseIncident": {
+      "x-opsgenie-domain": "incident",
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "tinyId": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "isSeen": {
+          "type": "boolean"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "string"
+        },
+        "responders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Recipient"
+          }
+        },
+        "teamId": {
+          "type": "string"
+        },
+        "details": {
+          "type": "object",
+          "description": "Map of key-value pairs to use as custom properties of the incident",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
