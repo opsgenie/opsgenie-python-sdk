@@ -118,7 +118,6 @@ def main(argv):
     sdk_metric_publisher.subscribe(metric_observer)
 
     print()
-
     print('Create Incident:')
     response = incident.create_incident()
     request_id = response.request_id

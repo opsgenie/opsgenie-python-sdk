@@ -86,7 +86,6 @@ class Alert:
             print("Exception when calling AlertApi->acknowledge_alerts: %s\n" % err)
 
     def snooze_alert(self, alert_id):
-        end_time = datetime.datetime(2020, 3, 22, 20, 20).isoformat()
         body = opsgenie_sdk.SnoozeAlertPayload(end_time="2020-04-03T20:05:50.894Z")
         try:
             snooze_response = self.alert_api.snooze_alert(identifier=alert_id, snooze_alert_payload=body)
@@ -94,6 +93,9 @@ class Alert:
             return snooze_response
         except ApiException as err:
             print("Exception when calling AlertApi->snooze_alerts: %s\n" % err)
+
+    def escalate_alert(self, alert_id):
+        body = opsgenie_sdk.EscalateAlertToNextPayload()
 
     def close_alert(self, alert_id):
         body = opsgenie_sdk.CloseAlertPayload(note='Example Closed')
