@@ -1,8 +1,8 @@
 import getopt
+import json
 import sys
 
 import opsgenie_sdk
-import datetime
 from opsgenie_sdk.metrics.observer import Observer
 from opsgenie_sdk.rest import ApiException
 
@@ -117,7 +117,7 @@ class Alert:
 
 
 def main(argv):
-    opsgenie_api_key = 'c6cc95c0-a137-4b54-9115-a2163070083f'
+    opsgenie_api_key = ''
     try:
         opts, args = getopt.getopt(argv, "ha:s:")
     except getopt.GetoptError:
@@ -149,15 +149,13 @@ def main(argv):
     print()
     print('Create Alert:')
     response = alert.create_alert()
-    request_id = response.request_id
 
-    alert_id = None
-    while alert_id is None:
-        print()
-        print('Get Request Status:')
-        response = alert.check_request_status(request_id)
-        if response.data is not None and response.data.is_success is True:
-            alert_id = response.data.alert_id
+    print()
+    print('Retrieve Result:')
+    result = response.retrieve_result()
+    print(json.loads(result.data))
+
+    alert_id = response.id
 
     print()
     print('Get Alert:')
