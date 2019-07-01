@@ -1,4 +1,5 @@
 import getopt
+import json
 import sys
 
 import opsgenie_sdk
@@ -122,13 +123,16 @@ def main(argv):
     response = incident.create_incident()
     request_id = response.request_id
 
-    incident_id = None
-    while incident_id is None:
-        print()
-        print('Get Request Status:')
-        response = incident.check_request_status(request_id)
-        if response.data is not None and response.data.is_success is True:
-            incident_id = response.data.incident_id
+    print()
+    print('Retrieve Result:')
+    result = response.retrieve_result()
+    print(json.loads(result.data))
+
+    incident_id = response.id
+
+    print()
+    print('Get Request Status:')
+    incident.check_request_status(request_id)
 
     print()
     print('Get Incident:')
