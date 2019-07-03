@@ -110,6 +110,90 @@ class ApiException(OpenApiException):
         return error_message
 
 
+class AuthenticationException(OpenApiException):
+
+    def __init__(self, status=None, reason=None, http_resp=None):
+        if http_resp:
+            self.status = http_resp.status
+            self.reason = http_resp.reason
+            self.body = http_resp.data
+            self.headers = http_resp.getheaders()
+        else:
+            self.status = status
+            self.reason = reason
+            self.body = None
+            self.headers = None
+
+    def __str__(self):
+        """Custom error messages for exception"""
+        error_message = "You are not authorized to perform this action: ({0})\n" \
+                        "Reason: {1}\n".format(self.status, self.reason)
+        if self.headers:
+            error_message += "HTTP response headers: {0}\n".format(
+                self.headers)
+
+        if self.body:
+            error_message += "HTTP response body: {0}\n".format(self.body)
+
+        return error_message
+
+
+class ServerErrorException(OpenApiException):
+
+    def __init__(self, status=None, reason=None, http_resp=None):
+        if http_resp:
+            self.status = http_resp.status
+            self.reason = http_resp.reason
+            self.body = http_resp.data
+            self.headers = http_resp.getheaders()
+        else:
+            self.status = status
+            self.reason = reason
+            self.body = None
+            self.headers = None
+
+    def __str__(self):
+        """Custom error messages for exception"""
+        error_message = "There is an internal server error: ({0})\n" \
+                        "Reason: {1}\n".format(self.status, self.reason)
+        if self.headers:
+            error_message += "HTTP response headers: {0}\n".format(
+                self.headers)
+
+        if self.body:
+            error_message += "HTTP response body: {0}\n".format(self.body)
+
+        return error_message
+
+
+class ConfigurationException(OpenApiException):
+
+    def __init__(self, status=None, reason=None, http_resp=None):
+        if http_resp:
+            self.status = http_resp.status
+            self.reason = http_resp.reason
+            self.body = http_resp.data
+            self.headers = http_resp.getheaders()
+        else:
+            self.status = status
+            self.reason = reason
+            self.body = None
+            self.headers = None
+
+    def __str__(self):
+        """Custom error messages for exception"""
+        error_message = "You have configured something wrong: ({0})\n" \
+                        "Reason: {1}\n".format(self.status, self.reason)
+        if self.headers:
+            error_message += "HTTP response headers: {0}\n".format(
+                self.headers)
+
+        if self.body:
+            error_message += "HTTP response body: {0}\n".format(self.body)
+
+        return error_message
+
+
 def render_path(path_to_item):
     """Returns a string representation of a path"""
     result = ""
@@ -119,3 +203,39 @@ def render_path(path_to_item):
         else:
             result += "['{0}']".format(pth)
     return result
+
+
+def build_exception(response):
+    http_error_code = response.status
+    return {
+        400: ConfigurationException(reason="Invalid JSON body", http_resp=response),
+        401: AuthenticationException(reason="apiKey is invalid or integration is disabled", http_resp=response),
+        402: AuthenticationException(
+            reason="apiKey is valid but the account cannot do this action because of subscription plan",
+            http_resp=response),
+        403: AuthenticationException(
+            reason="apiKey is valid but the apiKey cannot do this operation because of permissions",
+            http_resp=response),
+        404: ApiException(reason="Resource or handler not found", http_resp=response),
+        405: AuthenticationException(reason="URL is valid but HTTP method not supported", http_resp=response),
+        406: ConfigurationException(reason="Requested format is not supported (Accept header)", http_resp=response),
+        409: ConfigurationException(
+            reason="ID or name conflicts with another entity. E.g. integration name already exists",
+            http_resp=response),
+        410: ConfigurationException(reason="Feature is deprecated"),
+        415: ConfigurationException(reason="Request body format is not supported (Content-Type header)",
+                                    http_resp=response),
+        416: ConfigurationException(reason="The given range is not supported.", http_resp=response),
+        422: ConfigurationException(reason="Semantic errors in request body"),
+        428: ConfigurationException(reason="Entity is used by another entity (schedule,escalation,team,etc)",
+                                    http_resp=response),
+        429: ApiException(reason="Throttling"),
+        500: ServerErrorException(reason="Internal Server Error", http_resp=response),
+        501: ServerErrorException(reason="Not Implemented", http_resp=response),
+        503: ServerErrorException(reason="Back-end servers are at capacity", http_resp=response),
+        -100: ApiException(http_resp=response)
+    }.get(http_error_code, -100)
+
+
+def get_all_exceptions():
+    return ApiException, AuthenticationException, ServerErrorException, ConfigurationException

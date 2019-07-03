@@ -194,7 +194,7 @@ class ApiClient(object):
                                                 "body": body,
                                                 "_preload_content": _preload_content,
                                                 "_request_timeout": _request_timeout},
-                                       exceptions=rest.ApiException,
+                                       exceptions=opsgenie_sdk.exceptions.get_all_exceptions(),
                                        tries=self.retry_count,
                                        delay=self.delay,
                                        max_delay=self.max_delay,
@@ -235,6 +235,10 @@ class ApiClient(object):
         data_temp = json.loads(response_data.data)
         data_temp['url'] = url
         response_data.data = json.dumps(data_temp)
+
+        if response_data.status >= 400:
+            exception = opsgenie_sdk.exceptions.build_exception(response=response_data)
+            raise exception
 
         return_data = response_data
         if _preload_content:

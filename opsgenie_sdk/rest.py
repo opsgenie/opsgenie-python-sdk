@@ -28,6 +28,7 @@ from opsgenie_sdk import errors
 from .metrics import HttpMetric
 import urllib3
 
+from opsgenie_sdk import exceptions
 from opsgenie_sdk.exceptions import ApiException, ApiValueError
 
 
@@ -257,9 +258,10 @@ class RESTClientObject(object):
                                           status_code=r.status,
                                           request=query_params)
 
-        shouldRetry = self.__checkHttpCode(r.status)
+        shouldRetry = self.__checkHttpCode__(r.status)
         if shouldRetry:
-            raise ApiException(http_resp=r)
+            exception = exceptions.build_exception(response=r)
+            raise exception
 
         return r
 
@@ -331,7 +333,7 @@ class RESTClientObject(object):
     def decodeResponse(self, data):
         return json.loads(data)
 
-    def __checkHttpCode(self, status):
+    def __checkHttpCode__(self, status):
         result = False
         try:
             code_set = self.http_codes
@@ -341,13 +343,13 @@ class RESTClientObject(object):
                         httpRange = [int(singleCode.strip()) for singleCode in code.split('-')]
                         result = httpRange[0] <= status <= httpRange[1]
                     elif "x" in code:
-                        result = int(code[0]) == status / 100
+                        result = int(code[0]) == int(status / 100)
                     elif int(code) == status:
-                        result =  True
+                        result = True
                     elif len(code) != 3 | len(code) != 6:
                         raise errors.HTTPException
                     else:
-                        result =  False
+                        result = False
         except:
             msg = "Please ensure your configured HTTP codes follow the following format:\n" \
                   "* Single codes, i.e '504', '429'\n" \
