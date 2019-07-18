@@ -17,9 +17,7 @@ import re  # noqa: F401
 import six
 
 import time
-import json
-import certifi
-import urllib3
+import random
 
 import opsgenie_sdk
 from opsgenie_sdk.models.success_data import SuccessData  # noqa: F401,E501
@@ -56,7 +54,7 @@ class SuccessResponse(object):
     }
     attribute_map['url'] = 'url'
 
-    def __init__(self, request_id=None, took=0.0, result=None, data=None, url=None):  # noqa: E501
+    def __init__(self, request_id=None, took=0.0, result=None, data=None, url=None, api_client=None):  # noqa: E501
         """SuccessResponse - a model defined in OpenAPI"""  # noqa: E501
 
         self._request_id = None
@@ -72,13 +70,11 @@ class SuccessResponse(object):
         if data is not None:
             self.data = data
 
-        if url is not None:
-            self.url = url
-        else:
-            self.url = None
+        self.url = url
+        self.api_client = api_client
 
         self._id = None
-        self.conf = opsgenie_sdk.configuration.Configuration()
+        self.conf = api_client.configuration
         self.logger = self.conf.logger["package_logger"]
     @property
     def request_id(self):
@@ -190,96 +186,67 @@ class SuccessResponse(object):
         self._url = url
 
     def retrieve_result(self):
-        conf = self.conf
-        api_key = conf.api_key_prefix.get('Authorization') + ' ' + conf.api_key.get('Authorization')
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        headers = {
-            'Authorization': api_key
-        }
-
-        request_url = self._build_request_url_(conf.host)
-
-        attempt_count = 0
-        MAX_NUMBER_OF_RETRIES = conf.short_polling_max_retries
+        domain_api_client = self._get_domain_api_client_()
+        MAX_NUMBER_OF_RETRIES = self.conf.short_polling_max_retries
         condition = True
         response = None
+        attempt_count = 0
 
         while condition:
             if attempt_count > 0:
-                time.sleep(2 * attempt_count * 0.2)
+                sleep_time = random.uniform(0, (0.2 * 2 ** attempt_count))
+                time.sleep(sleep_time)
 
             try:
-                self.logger.debug(
-                    str(attempt_count + 1) + ' attempt to retrieve result with request_id: ' + str(self.request_id))
-                response = http.request(method='GET', url=request_url, headers=headers)
-            except ApiException as err:
-                print("Exception when calling success_response->retrieve_result: %s\n" % err)
+                response = domain_api_client.get_incident_request_status(request_id=self.request_id)
+            except AttributeError:
+                response = domain_api_client.get_request_status(request_id=self.request_id)
 
-            response_headers = response.headers
-            if response_headers is not None:
-                rate_limit_state = response_headers.get('X-RateLimit-State')
-                status_code = response.status
+            if response.data.is_success is True:
+                should_retry = False
 
-                if rate_limit_state == 'THROTTLED':
-                    should_retry = True
-                    self.logger.debug('Should retry because X-RateLimit-State is THROTTLED')
-                elif status_code == 429:
-                    should_retry = True
-                    self.logger.debug('Should retry because Status is 429')
-                elif 500 <= status_code <= 599:
-                    should_retry = True
-                    self.logger.debug('Should retry because Status is ' + status_code)
-                else:
-                    should_retry = False
-                    response_body = response.data
-                    response_body_decoded = json.loads(response_body)
-                    response_body_decoded_data = response_body_decoded.get('data')
-                    if response_body_decoded_data is not None:
-                        self._id = response_body_decoded_data.get('alertId')
-                        if self._id is None:
-                            self._id = response_body_decoded_data.get('incidentId')
-
-                attempt_count += 1
-
-                if should_retry and attempt_count < MAX_NUMBER_OF_RETRIES:
-                    condition = True
-                else:
-                    condition = False
+                if hasattr(response.data, "alert_id"):
+                    self._id = response.data.alert_id
+                elif hasattr(response.data, "incident_id"):
+                    self._id = response.data.incident_id
             else:
+                should_retry = True
+
+            if should_retry and attempt_count < MAX_NUMBER_OF_RETRIES:
                 condition = True
+            else:
+                condition = False
+
+            attempt_count += 1
 
         return response
 
     def retrieve_resulting_action(self):
-        conf = self.conf
-        api_key = conf.api_key_prefix.get('Authorization') + ' ' + conf.api_key.get('Authorization')
-        http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-        headers = {
-            'Authorization': api_key
-        }
-
         if self._id is None:
             self.retrieve_result()
 
-        request_url = self._build_request_url_(conf.host)
+        domain_api_client = self._get_domain_api_client_()
 
         try:
-            response = http.request(method='GET', url=request_url, headers=headers)
+            action = domain_api_client.get_alert(identifier=self._id)
+        except AttributeError:
+            action = domain_api_client.get_incident(identifier=self._id)
 
-            return response
-        except ApiException as err:
-            print("Exception when calling success_response->retrieve_result: %s\n" % err)
+        return action
 
-    def _build_request_url_(self, host):
+    def _get_domain_api_client_(self):
         if 'alerts' in self.url:
-            return host + '/v2/alerts/requests/' + self.request_id
+            return opsgenie_sdk.AlertApi(api_client=self.api_client)
         elif 'incident' in self.url:
-            return host + '/v1/incidents/requests/' + self.request_id
+            return opsgenie_sdk.IncidentApi(api_client=self.api_client)
         else:
             raise ApiException(reason='Short polling is not currently supported for this domain')
 
     @property
     def id(self):
+        if self._id is None:
+            self.retrieve_result()
+
         return self._id
 
     def to_dict(self):
