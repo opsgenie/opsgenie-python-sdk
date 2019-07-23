@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import
 
+import copy
 import io
 import json
 import logging
@@ -45,7 +46,7 @@ class RESTResponse(io.IOBase):
 
 class RESTClientObject(object):
 
-    def __init__(self, configuration, pools_size=4, maxsize=None):
+    def __init__(self, configuration, pools_size=4, maxsize=None, retrying=None):
         # urllib3.PoolManager will pass all kw parameters to connectionpool
         # https://github.com/shazow/urllib3/blob/f9409436f83aeb79fbaf090181cd81b784f1b8ce/urllib3/poolmanager.py#L75  # noqa: E501
         # https://github.com/shazow/urllib3/blob/f9409436f83aeb79fbaf090181cd81b784f1b8ce/urllib3/connectionpool.py#L680  # noqa: E501
@@ -70,8 +71,7 @@ class RESTClientObject(object):
         if configuration.assert_hostname is not None:
             addition_pool_args['assert_hostname'] = configuration.assert_hostname  # noqa: E501
 
-        if configuration.retries is not None:
-            addition_pool_args['retries'] = configuration.retries
+        addition_pool_args['retries'] = False
 
         if maxsize is None:
             if configuration.connection_pool_maxsize is not None:
@@ -80,7 +80,7 @@ class RESTClientObject(object):
                 maxsize = 4
 
         self.http_codes = configuration.retry_http_response
-        self.retries = -1
+        self.retrying = retrying
 
         self.http_metric = HttpMetric("HttpMetricPublisher")
         self.configuration = configuration
@@ -112,7 +112,6 @@ class RESTClientObject(object):
     def request(self, method, url, query_params=None, headers=None,
                 body=None, post_params=None, _preload_content=True,
                 _request_timeout=None):
-        self.retries += 1
         """Perform requests.
 
         :param method: http request method
@@ -234,7 +233,7 @@ class RESTClientObject(object):
             self.http_metric.build_metric(transaction_id=self.configuration.metrics_transaction_id,
                                           duration=data["took"],
                                           resource_path=url,
-                                          retry_count=self.retries,
+                                          retry_statistics=copy.deepcopy(self.retrying.statistics),
                                           error=False,
                                           status=r.status,
                                           status_code=r.status,
@@ -243,14 +242,14 @@ class RESTClientObject(object):
             self.http_metric.build_metric(transaction_id=self.configuration.metrics_transaction_id,
                                           duration=data["took"],
                                           resource_path=url,
-                                          retry_count=self.retries,
+                                          retry_statistics=copy.deepcopy(self.retrying.statistics),
                                           error=True,
                                           status=r.status,
                                           status_code=r.status,
                                           request=query_params)
 
-        shouldRetry = self.__checkHttpCode__(r.status)
-        if shouldRetry:
+        should_retry = self.__checkHttpCode__(r.status)
+        if should_retry:
             exception = exceptions.build_exception(response=r)
             raise exception
 

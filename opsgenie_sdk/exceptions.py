@@ -17,6 +17,10 @@ class OpenApiException(Exception):
     """The base exception class for all OpenAPIExceptions"""
 
 
+class RetryableException(OpenApiException):
+    """The base exception class for all Exceptions for which a retry attempt can be made"""
+
+
 class ApiTypeError(OpenApiException, TypeError):
     def __init__(self, msg, path_to_item=None, valid_classes=None,
                  key_type=None):
@@ -81,7 +85,7 @@ class ApiKeyError(OpenApiException, KeyError):
         super(ApiKeyError, self).__init__(full_msg)
 
 
-class ApiException(OpenApiException):
+class ApiException(RetryableException):
 
     def __init__(self, status=None, reason=None, http_resp=None):
         if http_resp:
@@ -109,7 +113,7 @@ class ApiException(OpenApiException):
         return error_message
 
 
-class AuthenticationException(OpenApiException):
+class AuthenticationException(RetryableException):
 
     def __init__(self, status=None, reason=None, http_resp=None):
         if http_resp:
@@ -137,7 +141,7 @@ class AuthenticationException(OpenApiException):
         return error_message
 
 
-class ServerErrorException(OpenApiException):
+class ServerErrorException(RetryableException):
 
     def __init__(self, status=None, reason=None, http_resp=None):
         if http_resp:
@@ -165,7 +169,7 @@ class ServerErrorException(OpenApiException):
         return error_message
 
 
-class ConfigurationException(OpenApiException):
+class ConfigurationException(RetryableException):
 
     def __init__(self, status=None, reason=None, http_resp=None):
         if http_resp:

@@ -10,7 +10,7 @@ class HttpMetric(Publisher):
         self.name = name
         self.logger = logging.getLogger('{{{packageName}}}')
         self._data = None
-        self.metric = namedtuple('HttpMetric', ['transactionId', 'duration', 'resourcePath', 'retryCount', 'error',
+        self.metric = namedtuple('HttpMetric', ['transactionId', 'duration', 'resourcePath', 'retryStatistics', 'error',
                                                 'status', 'statusCode', 'request'])
 
     def __str__(self):
@@ -21,10 +21,10 @@ class HttpMetric(Publisher):
     def data(self):
         return self._data
 
-    def build_metric(self, transaction_id, duration, resource_path, retry_count, error, status,
+    def build_metric(self, transaction_id, duration, resource_path, retry_statistics, error, status,
                      status_code, request):
         try:
-            self._data = self.metric(transaction_id, duration, resource_path, retry_count, error, status, status_code,
+            self._data = self.metric(transaction_id, duration, resource_path, retry_statistics, error, status, status_code,
                                      request)
         except ValueError as e:
             print('Error: {}'.format(e))
