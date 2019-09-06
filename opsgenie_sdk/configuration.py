@@ -82,11 +82,11 @@ class Configuration(six.with_metaclass(TypeWithDefault, object)):
         # Delay time between attempts
         self.retry_delay = 0
         # Maximum amount of delay
-        self.retry_max_delay = None
+        self.retry_max_delay = 60
         # Multiplier applied to delay between attempts
         self.back_off = 1
         # Http status codes on which to perform retry
-        self.retry_http_response = ['5xx', '429']
+        self.retry_http_response = ['429', '500', '502-599']
         # To enable/disable retry feature
         self.retry_enabled = True
 

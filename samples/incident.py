@@ -18,11 +18,7 @@ class Incident:
 
         self.conf.debug = False
         # self.conf.logger_file = 'incident_debug.log'
-
-        self.conf.retry_count = 5
-        self.conf.retry_http_response = ['4xx', '5xx']
-        self.conf.retry_delay = 2
-        self.conf.retry_enabled = True
+        # self.conf.retry_http_response = ['4xx', '5xx']
 
         self.api_client = opsgenie_sdk.api_client.ApiClient(configuration=self.conf)
         self.incident_api = opsgenie_sdk.IncidentApi(api_client=self.api_client)

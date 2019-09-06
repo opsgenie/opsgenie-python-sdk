@@ -11,6 +11,7 @@
 
 from __future__ import absolute_import
 
+import copy
 import datetime
 import json
 import mimetypes
@@ -22,15 +23,16 @@ import uuid
 
 # python 2 and python 3 compatibility library
 import six
+import tenacity
 from numpy import long
-from retry.api import retry_call
 from six.moves.urllib.parse import quote
+from urllib3.exceptions import HTTPError
 
 import opsgenie_sdk
 from opsgenie_sdk import metrics
 from opsgenie_sdk import rest
 from opsgenie_sdk.configuration import Configuration
-from opsgenie_sdk.exceptions import ApiValueError
+from opsgenie_sdk.exceptions import ApiValueError, RetryableException
 
 
 class ApiClient(object):
@@ -75,7 +77,15 @@ class ApiClient(object):
         self.configuration = configuration
         self.pool_threads = pool_threads
 
-        self.rest_client = rest.RESTClientObject(configuration)
+        self.retrying = tenacity.Retrying(stop=tenacity.stop_after_attempt(configuration.retry_count),
+                                          wait=tenacity.wait_random_exponential(multiplier=configuration.back_off,
+                                                                                max=configuration.retry_max_delay,
+                                                                                min=configuration.retry_delay),
+                                          retry=(tenacity.retry_if_result(self.is_retry_enabled) and
+                                                 ((tenacity.retry_if_exception_type(RetryableException)) |
+                                                  (tenacity.retry_if_exception_type(HTTPError)))))
+
+        self.rest_client = rest.RESTClientObject(configuration, retrying=self.retrying)
         self.default_headers = {}
         if header_name is not None:
             self.default_headers[header_name] = header_value
@@ -93,6 +103,9 @@ class ApiClient(object):
             self._pool.close()
             self._pool.join()
             self._pool = None
+
+    def is_retry_enabled(self):
+        return self.configuration.retry_enabled
 
     @property
     def pool(self):
@@ -178,35 +191,14 @@ class ApiClient(object):
             # use server/host defined in path or operation instead
             url = _host + resource_path
 
-        # retry setting
-        self.retry_count = config.retry_count
-        self.delay = config.retry_delay
-        self.max_delay = config.retry_max_delay
-        self.back_off = config.back_off
-        self.retry_enabled = config.retry_enabled
-
         # perform request and return response
-        if self.retry_enabled:
-            response_data = retry_call(self.request, fargs=[method, url],
-                                       fkwargs={"query_params": query_params,
-                                                "headers": header_params,
-                                                "post_params": post_params,
-                                                "body": body,
-                                                "_preload_content": _preload_content,
-                                                "_request_timeout": _request_timeout},
-                                       exceptions=opsgenie_sdk.exceptions.get_all_exceptions(),
-                                       tries=self.retry_count,
-                                       delay=self.delay,
-                                       max_delay=self.max_delay,
-                                       backoff=self.back_off)
-        else:
-            response_data = self.request(method, url,
-                                         query_params=query_params,
-                                         headers=header_params,
-                                         post_params=post_params,
-                                         body=body,
-                                         _preload_content=_preload_content,
-                                         _request_timeout=_request_timeout)
+        response_data = self.retrying.call(fn=self.request, method=method, url=url,
+                                           query_params=query_params,
+                                           headers=header_params,
+                                           post_params=post_params,
+                                           body=body,
+                                           _preload_content=_preload_content,
+                                           _request_timeout=_request_timeout)
 
         self.last_response = response_data
 
@@ -216,7 +208,8 @@ class ApiClient(object):
                                                duration=datetime.datetime.now() - self._request_start_time,
                                                resource_path=self._metric_url,
                                                response_data=response_data,
-                                               http_response=response_data.data, retry_count=self.rest_client.retries)
+                                               http_response=response_data.data,
+                                               retry_statistics=copy.deepcopy(self.retrying.statistics))
 
         self._sdk_request_details = {
             "query_params": query_params,
@@ -315,7 +308,7 @@ class ApiClient(object):
             data = json.loads(response.data)
         except ValueError:
             data = response.data
-            self.sdk_metric_publisher.build_metric(transaction_id=self._transaction_id,
+            self.sdk_metric_publisher.build_metric(transaction_id=self.configuration.transaction_id,
                                                    duration=datetime.datetime.now() - self._request_start_time,
                                                    resource_path=self._metric_url,
                                                    error_type='http-response-parsing-error',
