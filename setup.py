@@ -48,7 +48,7 @@ setup(
         'Tracker': 'https://github.com/opsgenie/opsgenie-python-sdk/issues',
     },
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved :: Apache Software License',
         "Operating System :: OS Independent",
     ]
