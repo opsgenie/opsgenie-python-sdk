@@ -1,5 +1,4 @@
 import getopt
-import json
 import sys
 
 import opsgenie_sdk
@@ -150,12 +149,17 @@ def main(argv):
     print('Create Alert:')
     response = alert.create_alert()
 
+    alert_id = response.id
+
     print()
     print('Retrieve Result:')
     result = response.retrieve_result()
-    print(json.loads(result.data))
+    print(result)
 
-    alert_id = response.id
+    print()
+    print('Retrieve Resulting Action:')
+    alert1 = response.retrieve_resulting_action()
+    print(alert1)
 
     print()
     print('Get Alert:')

@@ -1,11 +1,9 @@
 import getopt
-import json
 import sys
 
 import opsgenie_sdk
 from opsgenie_sdk.metrics.observer import Observer
 from opsgenie_sdk.rest import ApiException
-
 
 class MetricObserver(Observer):
     def notify(self, publisher):
@@ -126,7 +124,12 @@ def main(argv):
     print()
     print('Retrieve Result:')
     result = response.retrieve_result()
-    print(json.loads(result.data))
+    print(result)
+
+    print()
+    print('Retrieve Resulting Action:')
+    incident1 = response.retrieve_resulting_action()
+    print(incident1)
 
     incident_id = response.id
 

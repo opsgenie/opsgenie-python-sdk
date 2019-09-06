@@ -24,7 +24,7 @@ VERSION = "2.0.0b3"
 # prerequisite: setuptools
 # http://pypi.python.org/pypi/setuptools
 
-REQUIRES = ["urllib3 >= 1.15", "six >= 1.10", "certifi", "python-dateutil", "numpy >= 1.16.3", "retry >= 0.9.2"]
+REQUIRES = ["urllib3 >= 1.15", "six >= 1.10", "certifi", "python-dateutil", "numpy >= 1.16.3", "retry >= 0.9.2", "setuptools >= 21.0.0"]
 
 with open("README.md", "r") as fh:
     long_description = fh.read()

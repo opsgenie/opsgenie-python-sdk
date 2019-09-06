@@ -708,6 +708,9 @@ class ApiClient(object):
                     value = data[klass.attribute_map[attr]]
                     kwargs[attr] = self.__deserialize(value, attr_type)
 
+        if hasattr(klass, "url") and hasattr(klass, "id"):
+            kwargs["api_client"] = self
+
         instance = klass(**kwargs)
 
         if hasattr(instance, 'get_real_child_model'):
