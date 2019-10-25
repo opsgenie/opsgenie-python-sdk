@@ -1,8 +1,8 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "OpsGenie REST API",
-    "description": "OpsGenie OpenAPI Specification",
+    "title": "Opsgenie REST API",
+    "description": "Opsgenie OpenAPI Specification",
     "version": "2.0.0"
   },
   "host": "api.opsgenie.com",
@@ -3134,7 +3134,7 @@
           "account"
         ],
         "summary": "Get Account Info",
-        "description": "Used to search and retrieve account information in OpsGenie",
+        "description": "Used to search and retrieve account information in Opsgenie",
         "operationId": "getInfo",
         "externalDocs": {
           "description": "For more information",
