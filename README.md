@@ -67,6 +67,11 @@ except ApiException as e:
     print("Exception when calling AccountApi->get_info: %s\n" % e)
 
 ```
+Note: if you have an european account please set attribute 'host'
+
+```
+configuration.host = 'https://api.eu.opsgenie.com'
+```
 
 ## Documentation for API Endpoints
 
