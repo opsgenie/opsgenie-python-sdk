@@ -9105,7 +9105,7 @@ components:
         responders:
           type: array
           items:
-            $ref: '#/components/schemas/Recipient'
+            $ref: '#/components/schemas/Responder'
         integration:
           $ref: '#/components/schemas/AlertIntegration'
         report:
@@ -9315,7 +9315,7 @@ components:
         responders:
           type: array
           items:
-            $ref: '#/components/schemas/Recipient'
+            $ref: '#/components/schemas/Responder'
         teamId:
           type: string
         details:

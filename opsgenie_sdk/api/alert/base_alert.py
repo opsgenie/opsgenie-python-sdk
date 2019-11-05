@@ -49,7 +49,7 @@ class BaseAlert(object):
         'source': 'str',
         'owner': 'str',
         'priority': 'str',
-        'responders': 'list[Recipient]',
+        'responders': 'list[Responder]',
         'integration': 'AlertIntegration',
         'report': 'AlertReport'
     }
@@ -507,7 +507,7 @@ class BaseAlert(object):
 
 
         :return: The responders of this BaseAlert.  # noqa: E501
-        :rtype: list[Recipient]
+        :rtype: list[Responder]
         """
         return self._responders
 
@@ -517,7 +517,7 @@ class BaseAlert(object):
 
 
         :param responders: The responders of this BaseAlert.  # noqa: E501
-        :type: list[Recipient]
+        :type: list[Responder]
         """
 
         self._responders = responders

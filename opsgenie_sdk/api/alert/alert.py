@@ -49,7 +49,7 @@ class Alert(object):
         'source': 'str',
         'owner': 'str',
         'priority': 'str',
-        'responders': 'list[Recipient]',
+        'responders': 'list[Responder]',
         'integration': 'AlertIntegration',
         'report': 'AlertReport',
         'actions': 'list[str]',
@@ -527,7 +527,7 @@ class Alert(object):
 
 
         :return: The responders of this Alert.  # noqa: E501
-        :rtype: list[Recipient]
+        :rtype: list[Responder]
         """
         return self._responders
 
@@ -537,7 +537,7 @@ class Alert(object):
 
 
         :param responders: The responders of this Alert.  # noqa: E501
-        :type: list[Recipient]
+        :type: list[Responder]
         """
 
         self._responders = responders
