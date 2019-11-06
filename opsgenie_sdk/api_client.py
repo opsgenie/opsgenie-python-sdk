@@ -77,13 +77,12 @@ class ApiClient(object):
         self.configuration = configuration
         self.pool_threads = pool_threads
 
-        self.retrying = tenacity.Retrying(stop=tenacity.stop_after_attempt(configuration.retry_count),
+        self.retrying = tenacity.Retrying(stop=self.should_retry_stop,
                                           wait=tenacity.wait_random_exponential(multiplier=configuration.back_off,
                                                                                 max=configuration.retry_max_delay,
                                                                                 min=configuration.retry_delay),
-                                          retry=(tenacity.retry_if_result(self.is_retry_enabled) and
-                                                 ((tenacity.retry_if_exception_type(RetryableException)) |
-                                                  (tenacity.retry_if_exception_type(HTTPError)))))
+                                          retry=(tenacity.retry_if_exception_type(RetryableException) |
+                                                 (tenacity.retry_if_exception_type(HTTPError))))
 
         self.rest_client = rest.RESTClientObject(configuration, retrying=self.retrying)
         self.default_headers = {}
@@ -104,8 +103,11 @@ class ApiClient(object):
             self._pool.join()
             self._pool = None
 
-    def is_retry_enabled(self):
-        return self.configuration.retry_enabled
+    def should_retry_stop(self, retry_state):
+        if self.configuration.retry_enabled and retry_state.attempt_number <= self.configuration.retry_count:
+            return False
+
+        return True
 
     @property
     def pool(self):
