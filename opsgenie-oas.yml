@@ -9217,8 +9217,6 @@ components:
           - team
         id:
           type: string
-      discriminator:
-        propertyName: type
       x-opsgenie-domain: common
     AssignAlertPayload:
       allOf:
@@ -9239,7 +9237,6 @@ components:
           id:
             type: string
       x-opsgenie-domain: common
-      x-discriminator-value: user
     AddTagsToAlertPayload:
       allOf:
       - $ref: '#/components/schemas/AlertActionPayload'
@@ -9337,7 +9334,6 @@ components:
           name:
             type: string
       x-opsgenie-domain: common
-      x-discriminator-value: team
     WeekdayTimeRestrictionInterval:
       description: Weekday time restriction interval
       allOf:

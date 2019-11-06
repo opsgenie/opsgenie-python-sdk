@@ -32,21 +32,81 @@ class TeamResponder(object):
                             and the value is json key in definition.
     """
     openapi_types = {
+        'type': 'str',
+        'id': 'str',
         'name': 'str'
     }
 
     attribute_map = {
+        'type': 'type',
+        'id': 'id',
         'name': 'name'
     }
 
-    def __init__(self, name=None):  # noqa: E501
+    def __init__(self, type=None, id=None, name=None):  # noqa: E501
         """TeamResponder - a model defined in OpenAPI"""  # noqa: E501
 
+        self._type = None
+        self._id = None
         self._name = None
         self.discriminator = None
 
+        self.type = type
+        self.id = id
         if name is not None:
             self.name = name
+
+    @property
+    def type(self):
+        """Gets the type of this TeamResponder.  # noqa: E501
+
+
+        :return: The type of this TeamResponder.  # noqa: E501
+        :rtype: str
+        """
+        return self._type
+
+    @type.setter
+    def type(self, type):
+        """Sets the type of this TeamResponder.
+
+
+        :param type: The type of this TeamResponder.  # noqa: E501
+        :type: str
+        """
+        if type is None:
+            raise ValueError("Invalid value for `type`, must not be `None`")  # noqa: E501
+        allowed_values = ["user", "team"]  # noqa: E501
+        if type not in allowed_values:
+            raise ValueError(
+                "Invalid value for `type` ({0}), must be one of {1}"  # noqa: E501
+                .format(type, allowed_values)
+            )
+
+        self._type = type
+
+    @property
+    def id(self):
+        """Gets the id of this TeamResponder.  # noqa: E501
+
+
+        :return: The id of this TeamResponder.  # noqa: E501
+        :rtype: str
+        """
+        return self._id
+
+    @id.setter
+    def id(self, id):
+        """Sets the id of this TeamResponder.
+
+
+        :param id: The id of this TeamResponder.  # noqa: E501
+        :type: str
+        """
+        if id is None:
+            raise ValueError("Invalid value for `id`, must not be `None`")  # noqa: E501
+
+        self._id = id
 
     @property
     def name(self):
