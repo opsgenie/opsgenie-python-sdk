@@ -20,7 +20,7 @@ Name | Type | Description | Notes
 **source** | **str** |  | [optional] 
 **owner** | **str** |  | [optional] 
 **priority** | **str** |  | [optional] 
-**responders** | [**list[Recipient]**](Recipient.md) |  | [optional] 
+**responders** | [**list[Responder]**](Responder.md) |  | [optional] 
 **integration** | [**AlertIntegration**](AlertIntegration.md) |  | [optional] 
 **report** | [**AlertReport**](AlertReport.md) |  | [optional] 
 

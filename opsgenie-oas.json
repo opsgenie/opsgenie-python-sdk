@@ -4518,7 +4518,6 @@
     "Responder": {
       "x-opsgenie-domain": "common",
       "type": "object",
-      "discriminator": "type",
       "required": [
         "type",
         "id"
@@ -4538,7 +4537,6 @@
     },
     "UserResponder": {
       "x-opsgenie-domain": "common",
-      "x-discriminator-value": "user",
       "description": "User responder",
       "allOf": [
         {
@@ -4556,7 +4554,6 @@
     },
     "TeamResponder": {
       "x-opsgenie-domain": "common",
-      "x-discriminator-value": "team",
       "description": "Team responder",
       "allOf": [
         {
@@ -5294,7 +5291,7 @@
         "responders": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/Recipient"
+            "$ref": "#/definitions/Responder"
           }
         },
         "integration": {
@@ -6127,7 +6124,7 @@
         "responders": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/Recipient"
+            "$ref": "#/definitions/Responder"
           }
         },
         "teamId": {

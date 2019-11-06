@@ -43,7 +43,7 @@ class Incident(object):
         'source': 'str',
         'owner': 'str',
         'priority': 'str',
-        'responders': 'list[Recipient]',
+        'responders': 'list[Responder]',
         'team_id': 'str',
         'details': 'dict(str, str)',
         'request_id': 'str'
@@ -356,7 +356,7 @@ class Incident(object):
 
 
         :return: The responders of this Incident.  # noqa: E501
-        :rtype: list[Recipient]
+        :rtype: list[Responder]
         """
         return self._responders
 
@@ -366,7 +366,7 @@ class Incident(object):
 
 
         :param responders: The responders of this Incident.  # noqa: E501
-        :type: list[Recipient]
+        :type: list[Responder]
         """
 
         self._responders = responders

@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 **source** | **str** |  | [optional] 
 **owner** | **str** |  | [optional] 
 **priority** | **str** |  | [optional] 
-**responders** | [**list[Recipient]**](Recipient.md) |  | [optional] 
+**responders** | [**list[Responder]**](Responder.md) |  | [optional] 
 **team_id** | **str** |  | [optional] 
 **details** | **dict(str, str)** | Map of key-value pairs to use as custom properties of the incident | [optional] 
 
