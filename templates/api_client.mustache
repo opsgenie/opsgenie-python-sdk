@@ -73,8 +73,7 @@ class ApiClient(object):
 
         self.retrying = tenacity.Retrying(stop=self.should_retry_stop,
                                           wait=tenacity.wait_random_exponential(multiplier=configuration.back_off,
-                                                                                max=configuration.retry_max_delay,
-                                                                                min=configuration.retry_delay),
+                                                                                max=configuration.retry_delay),
                                           retry=(tenacity.retry_if_exception_type(RetryableException) |
                                                  (tenacity.retry_if_exception_type(HTTPError))))
 
@@ -98,7 +97,7 @@ class ApiClient(object):
             self._pool = None
 
     def should_retry_stop(self, retry_state):
-        if self.configuration.retry_enabled and retry_state.attempt_number <= self.configuration.retry_count:
+        if self.configuration.retry_enabled and retry_state.attempt_number <= self.configuration.retry_count and retry_state.seconds_since_start <= self.configuration.retry_max_delay:
             return False
 
         return True
