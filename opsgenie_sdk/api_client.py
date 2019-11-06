@@ -81,7 +81,7 @@ class ApiClient(object):
                                           wait=tenacity.wait_random_exponential(multiplier=configuration.back_off,
                                                                                 max=configuration.retry_max_delay,
                                                                                 min=configuration.retry_delay),
-                                          retry=(tenacity.retry_if_result(self.is_retry_enabled) and
+                                          retry=(tenacity.retry_if_result(self.is_retry_enabled) &
                                                  ((tenacity.retry_if_exception_type(RetryableException)) |
                                                   (tenacity.retry_if_exception_type(HTTPError)))))
 
@@ -104,7 +104,7 @@ class ApiClient(object):
             self._pool.join()
             self._pool = None
 
-    def is_retry_enabled(self):
+    def is_retry_enabled(self, _):
         return self.configuration.retry_enabled
 
     @property
