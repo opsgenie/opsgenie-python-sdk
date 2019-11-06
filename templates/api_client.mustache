@@ -191,13 +191,30 @@ class ApiClient(object):
             url = _host + resource_path
 
         # perform request and return response
-        response_data = {{#asyncio}}await {{/asyncio}}{{#tornado}}yield {{/tornado}}self.retrying.call(fn=self.request, method=method, url=url,
-                                           query_params=query_params,
-                                           headers=header_params,
-                                           post_params=post_params,
-                                           body=body,
-                                           _preload_content=_preload_content,
-                                           _request_timeout=_request_timeout)
+        try:
+            response_data = {{#asyncio}}await {{/asyncio}}{{#tornado}}yield {{/tornado}}self.retrying.call(fn=self.request, method=method, url=url,
+                                               query_params=query_params,
+                                               headers=header_params,
+                                               post_params=post_params,
+                                               body=body,
+                                               _preload_content=_preload_content,
+                                               _request_timeout=_request_timeout)
+        except Exception as exception:
+            self._sdk_request_details = {
+                "query_params": query_params,
+                "headers": header_params,
+                "post_params": post_params,
+                "body": body,
+                "_preload_content": _preload_content,
+                "_request_timeout": _request_timeout
+            }
+            self.sdk_metric_publisher.build_metric(transaction_id=config.metrics_transaction_id,
+                                                   duration=datetime.datetime.now() - self._request_start_time,
+                                                   resource_path=url, error_type=type(exception),
+                                                   error_message=str(exception),
+                                                   sdk_request_details=self._sdk_request_details,
+                                                   sdk_result_details="An Exception Was Thrown!")
+            raise exception
 
         self.last_response = response_data
 
