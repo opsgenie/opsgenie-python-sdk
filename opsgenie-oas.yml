@@ -9215,6 +9215,8 @@ components:
           enum:
           - user
           - team
+          - escalation
+          - schedule
         id:
           type: string
       x-opsgenie-domain: common
