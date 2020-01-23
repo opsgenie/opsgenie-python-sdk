@@ -8786,8 +8786,7 @@ components:
             type: object
             additionalProperties:
               type: string
-            description: Key-value pairs to add as custom property into alert. You
-              can refer here for example values
+            description: Key-value pairs to add as custom property into alert.
       x-opsgenie-domain: alert
     AlertRequestStatus:
       type: object
