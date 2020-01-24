@@ -9314,9 +9314,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Responder'
-        teamId:
+        ownerTeam:
           type: string
-        details:
+        extraProperties:
           type: object
           additionalProperties:
             type: string

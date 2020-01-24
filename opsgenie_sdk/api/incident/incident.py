@@ -44,8 +44,8 @@ class Incident(object):
         'owner': 'str',
         'priority': 'str',
         'responders': 'list[Responder]',
-        'team_id': 'str',
-        'details': 'dict(str, str)',
+        'owner_team': 'str',
+        'extra_properties': 'dict(str, str)',
         'request_id': 'str'
     }
 
@@ -62,12 +62,12 @@ class Incident(object):
         'owner': 'owner',
         'priority': 'priority',
         'responders': 'responders',
-        'team_id': 'teamId',
-        'details': 'details',
+        'owner_team': 'ownerTeam',
+        'extra_properties': 'extraProperties',
         'request_id': 'requestId'
     }
 
-    def __init__(self, id=None, tiny_id=None, message=None, status=None, is_seen=None, tags=None, created_at=None, updated_at=None, source=None, owner=None, priority=None, responders=None, team_id=None, details=None, request_id=None):  # noqa: E501
+    def __init__(self, id=None, tiny_id=None, message=None, status=None, is_seen=None, tags=None, created_at=None, updated_at=None, source=None, owner=None, priority=None, responders=None, owner_team=None, extra_properties=None, request_id=None):  # noqa: E501
         """Incident - a model defined in OpenAPI"""  # noqa: E501
 
         self._id = None
@@ -82,8 +82,8 @@ class Incident(object):
         self._owner = None
         self._priority = None
         self._responders = None
-        self._team_id = None
-        self._details = None
+        self._owner_team = None
+        self._extra_properties = None
         self._request_id = None
         self.discriminator = None
 
@@ -110,10 +110,10 @@ class Incident(object):
             self.priority = priority
         if responders is not None:
             self.responders = responders
-        if team_id is not None:
-            self.team_id = team_id
-        if details is not None:
-            self.details = details
+        if owner_team is not None:
+            self.owner_team = owner_team
+        if extra_properties is not None:
+            self.extra_properties = extra_properties
         if request_id is not None:
             self.request_id = request_id
 
@@ -372,48 +372,48 @@ class Incident(object):
         self._responders = responders
 
     @property
-    def team_id(self):
-        """Gets the team_id of this Incident.  # noqa: E501
+    def owner_team(self):
+        """Gets the owner_team of this Incident.  # noqa: E501
 
 
-        :return: The team_id of this Incident.  # noqa: E501
+        :return: The owner_team of this Incident.  # noqa: E501
         :rtype: str
         """
-        return self._team_id
+        return self._owner_team
 
-    @team_id.setter
-    def team_id(self, team_id):
-        """Sets the team_id of this Incident.
+    @owner_team.setter
+    def owner_team(self, owner_team):
+        """Sets the owner_team of this Incident.
 
 
-        :param team_id: The team_id of this Incident.  # noqa: E501
+        :param owner_team: The owner_team of this Incident.  # noqa: E501
         :type: str
         """
 
-        self._team_id = team_id
+        self._owner_team = owner_team
 
     @property
-    def details(self):
-        """Gets the details of this Incident.  # noqa: E501
+    def extra_properties(self):
+        """Gets the extra_properties of this Incident.  # noqa: E501
 
         Map of key-value pairs to use as custom properties of the incident  # noqa: E501
 
-        :return: The details of this Incident.  # noqa: E501
+        :return: The extra_properties of this Incident.  # noqa: E501
         :rtype: dict(str, str)
         """
-        return self._details
+        return self._extra_properties
 
-    @details.setter
-    def details(self, details):
-        """Sets the details of this Incident.
+    @extra_properties.setter
+    def extra_properties(self, extra_properties):
+        """Sets the extra_properties of this Incident.
 
         Map of key-value pairs to use as custom properties of the incident  # noqa: E501
 
-        :param details: The details of this Incident.  # noqa: E501
+        :param extra_properties: The extra_properties of this Incident.  # noqa: E501
         :type: dict(str, str)
         """
 
-        self._details = details
+        self._extra_properties = extra_properties
 
     @property
     def request_id(self):

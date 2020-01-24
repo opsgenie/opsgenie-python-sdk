@@ -6129,10 +6129,10 @@
             "$ref": "#/definitions/Responder"
           }
         },
-        "teamId": {
+        "ownerTeam": {
           "type": "string"
         },
-        "details": {
+        "extraProperties": {
           "type": "object",
           "description": "Map of key-value pairs to use as custom properties of the incident",
           "additionalProperties": {
