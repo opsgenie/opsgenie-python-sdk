@@ -135,7 +135,7 @@ class AddDetailsToAlertPayload(object):
     def details(self):
         """Gets the details of this AddDetailsToAlertPayload.  # noqa: E501
 
-        Key-value pairs to add as custom property into alert. You can refer here for example values  # noqa: E501
+        Key-value pairs to add as custom property into alert.  # noqa: E501
 
         :return: The details of this AddDetailsToAlertPayload.  # noqa: E501
         :rtype: dict(str, str)
@@ -146,7 +146,7 @@ class AddDetailsToAlertPayload(object):
     def details(self, details):
         """Sets the details of this AddDetailsToAlertPayload.
 
-        Key-value pairs to add as custom property into alert. You can refer here for example values  # noqa: E501
+        Key-value pairs to add as custom property into alert.  # noqa: E501
 
         :param details: The details of this AddDetailsToAlertPayload.  # noqa: E501
         :type: dict(str, str)
