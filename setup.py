@@ -16,7 +16,7 @@ import os
 from setuptools import setup, find_packages  # noqa: H301
 
 NAME = "opsgenie-sdk"
-VERSION = "2.0.2"
+VERSION = "2.0.3"
 # To install the library, run the following
 #
 # python setup.py install
