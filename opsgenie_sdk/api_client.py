@@ -77,13 +77,11 @@ class ApiClient(object):
         self.configuration = configuration
         self.pool_threads = pool_threads
 
-        self.retrying = tenacity.Retrying(stop=tenacity.stop_after_attempt(configuration.retry_count),
+        self.retrying = tenacity.Retrying(stop=self.should_retry_stop,
                                           wait=tenacity.wait_random_exponential(multiplier=configuration.back_off,
-                                                                                max=configuration.retry_max_delay,
-                                                                                min=configuration.retry_delay),
-                                          retry=(tenacity.retry_if_result(self.is_retry_enabled) and
-                                                 ((tenacity.retry_if_exception_type(RetryableException)) |
-                                                  (tenacity.retry_if_exception_type(HTTPError)))))
+                                                                                max=configuration.retry_delay),
+                                          retry=(tenacity.retry_if_exception_type(RetryableException) |
+                                                 (tenacity.retry_if_exception_type(HTTPError))))
 
         self.rest_client = rest.RESTClientObject(configuration, retrying=self.retrying)
         self.default_headers = {}
@@ -104,8 +102,11 @@ class ApiClient(object):
             self._pool.join()
             self._pool = None
 
-    def is_retry_enabled(self):
-        return self.configuration.retry_enabled
+    def should_retry_stop(self, retry_state):
+        if self.configuration.retry_enabled and retry_state.attempt_number <= self.configuration.retry_count and retry_state.seconds_since_start <= self.configuration.retry_max_delay:
+            return False
+
+        return True
 
     @property
     def pool(self):
@@ -192,13 +193,30 @@ class ApiClient(object):
             url = _host + resource_path
 
         # perform request and return response
-        response_data = self.retrying.call(fn=self.request, method=method, url=url,
-                                           query_params=query_params,
-                                           headers=header_params,
-                                           post_params=post_params,
-                                           body=body,
-                                           _preload_content=_preload_content,
-                                           _request_timeout=_request_timeout)
+        try:
+            response_data = self.retrying.call(fn=self.request, method=method, url=url,
+                                               query_params=query_params,
+                                               headers=header_params,
+                                               post_params=post_params,
+                                               body=body,
+                                               _preload_content=_preload_content,
+                                               _request_timeout=_request_timeout)
+        except Exception as exception:
+            self._sdk_request_details = {
+                "query_params": query_params,
+                "headers": header_params,
+                "post_params": post_params,
+                "body": body,
+                "_preload_content": _preload_content,
+                "_request_timeout": _request_timeout
+            }
+            self.sdk_metric_publisher.build_metric(transaction_id=config.metrics_transaction_id,
+                                                   duration=datetime.datetime.now() - self._request_start_time,
+                                                   resource_path=url, error_type=type(exception),
+                                                   error_message=str(exception),
+                                                   sdk_request_details=self._sdk_request_details,
+                                                   sdk_result_details="An Exception Was Thrown!")
+            raise exception
 
         self.last_response = response_data
 

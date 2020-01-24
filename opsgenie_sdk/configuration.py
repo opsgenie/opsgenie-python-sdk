@@ -80,7 +80,7 @@ class Configuration(six.with_metaclass(TypeWithDefault, object)):
         # Retry count
         self.retry_count = 5
         # Delay time between attempts
-        self.retry_delay = 0
+        self.retry_delay = 30
         # Maximum amount of delay
         self.retry_max_delay = 60
         # Multiplier applied to delay between attempts
@@ -116,8 +116,6 @@ class Configuration(six.with_metaclass(TypeWithDefault, object)):
         self.proxy_headers = None
         # Safe chars for path_param
         self.safe_chars_for_path_param = ''
-        # Adding retries to override urllib3 default value 3
-        self.retries = None
 
         self.metrics_transaction_id = None
 
