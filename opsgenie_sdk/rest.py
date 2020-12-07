@@ -23,7 +23,6 @@ import ssl
 import certifi
 # python 2 and python 3 compatibility library
 import six
-from numpy import long
 from six.moves.urllib.parse import urlencode
 from opsgenie_sdk import errors
 from .metrics import HttpMetric
