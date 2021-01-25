@@ -23,7 +23,6 @@ import ssl
 import certifi
 # python 2 and python 3 compatibility library
 import six
-from numpy import long
 from six.moves.urllib.parse import urlencode
 from opsgenie_sdk import errors
 from .metrics import HttpMetric
@@ -153,7 +152,7 @@ class RESTClientObject(object):
 
         timeout = None
         if _request_timeout:
-            if isinstance(_request_timeout, (int, ) if six.PY3 else (int, long)):  # noqa: E501,F821
+            if isinstance(_request_timeout, six.integer_types):
                 timeout = urllib3.Timeout(total=_request_timeout)
             elif (isinstance(_request_timeout, tuple) and
                   len(_request_timeout) == 2):

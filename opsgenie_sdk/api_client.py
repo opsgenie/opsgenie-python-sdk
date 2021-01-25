@@ -24,7 +24,6 @@ import uuid
 # python 2 and python 3 compatibility library
 import six
 import tenacity
-from numpy import long
 from six.moves.urllib.parse import quote
 from urllib3.exceptions import HTTPError
 
