@@ -85,7 +85,7 @@ class Alert:
             print("Exception when calling AlertApi->acknowledge_alerts: %s\n" % err)
 
     def snooze_alert(self, alert_id):
-        body = opsgenie_sdk.SnoozeAlertPayload(end_time="2020-04-03T20:05:50.894Z")
+        body = opsgenie_sdk.SnoozeAlertPayload(end_time="2030-04-03T20:05:50.894Z")
         try:
             snooze_response = self.alert_api.snooze_alert(identifier=alert_id, snooze_alert_payload=body)
             print(snooze_response)
