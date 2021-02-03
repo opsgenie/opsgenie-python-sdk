@@ -232,7 +232,7 @@ class RESTClientObject(object):
                            ('body', body), ('post_params', post_params)]
         if "message" not in data:
             self.http_metric.build_metric(transaction_id=self.configuration.metrics_transaction_id,
-                                          duration=data["took"],
+                                          duration=data.get("took"),
                                           resource_path=url,
                                           retry_statistics=copy.deepcopy(self.retrying.statistics),
                                           error=False,
@@ -241,7 +241,7 @@ class RESTClientObject(object):
                                           request=http_metrics_request)
         else:
             self.http_metric.build_metric(transaction_id=self.configuration.metrics_transaction_id,
-                                          duration=data["took"],
+                                          duration=data.get("took"),
                                           resource_path=url,
                                           retry_statistics=copy.deepcopy(self.retrying.statistics),
                                           error=True,
