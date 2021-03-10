@@ -236,27 +236,28 @@ class RESTClientObject(object):
             # log response body
             logger.debug("response body: %s", r.data)
 
-        data = self.decodeResponse(r.data)
         http_metrics_request = [('method', method), ('url', url), ('query_params', query_params), ('headers', headers),
                            ('body', body), ('post_params', post_params)]
-        if "message" not in data:
-            self.http_metric.build_metric(transaction_id=self.configuration.metrics_transaction_id,
-                                          duration=data.get("took"),
-                                          resource_path=url,
-                                          retry_statistics=copy.deepcopy(self.retrying.statistics),
-                                          error=False,
-                                          status=r.status,
-                                          status_code=r.status,
-                                          request=http_metrics_request)
-        else:
-            self.http_metric.build_metric(transaction_id=self.configuration.metrics_transaction_id,
-                                          duration=data.get("took"),
-                                          resource_path=url,
-                                          retry_statistics=copy.deepcopy(self.retrying.statistics),
-                                          error=True,
-                                          status=r.status,
-                                          status_code=r.status,
-                                          request=http_metrics_request)
+
+        try:
+            data = self.decodeResponse(r.data)
+            duration = data.get("took")
+            if "message" not in data:
+                error = False
+            else:
+                error = True
+        except:
+            duration = None
+            error = True
+
+        self.http_metric.build_metric(transaction_id=self.configuration.metrics_transaction_id,
+                                      duration=duration,
+                                      resource_path=url,
+                                      retry_statistics=copy.deepcopy(self.retrying.statistics),
+                                      error=error,
+                                      status=r.status,
+                                      status_code=r.status,
+                                      request=http_metrics_request)
 
         should_retry = self.__checkHttpCode__(r.status)
         if should_retry:
