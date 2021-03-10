@@ -190,13 +190,13 @@ class ApiClient(object):
 
         # perform request and return response
         try:
-            response_data = {{#asyncio}}await {{/asyncio}}{{#tornado}}yield {{/tornado}}self.retrying.call(fn=self.request, method=method, url=url,
-                                               query_params=query_params,
-                                               headers=header_params,
-                                               post_params=post_params,
-                                               body=body,
-                                               _preload_content=_preload_content,
-                                               _request_timeout=_request_timeout)
+            response_data = {{#asyncio}}await {{/asyncio}}{{#tornado}}yield {{/tornado}}self.retrying(fn=self.request, method=method, url=url,
+                                          query_params=query_params,
+                                          headers=header_params,
+                                          post_params=post_params,
+                                          body=body,
+                                          _preload_content=_preload_content,
+                                          _request_timeout=_request_timeout)
         except Exception as exception:
             self._sdk_request_details = {
                 "query_params": query_params,

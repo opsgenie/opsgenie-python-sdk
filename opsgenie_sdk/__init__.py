@@ -168,7 +168,7 @@ from opsgenie_sdk.models.weekday_time_restriction import WeekdayTimeRestriction
 from opsgenie_sdk.models.weekday_time_restriction_interval import WeekdayTimeRestrictionInterval
 from opsgenie_sdk.models.weekday_time_restriction_interval_all_of import WeekdayTimeRestrictionIntervalAllOf
 
-__version__ = "2.1.2"
+__version__ = "2.1.3"
 
 # import apis into sdk package
 
