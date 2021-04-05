@@ -231,8 +231,7 @@ def build_exception(response):
         500: ServerErrorException(reason="Internal Server Error"),
         501: ServerErrorException(reason="Not Implemented"),
         503: ServerErrorException(reason="Back-end servers are at capacity"),
-        -100: ApiException()
-    }.get(http_error_code, -100)
+    }.get(http_error_code, ApiException())
 
     exception.status = response.status
     exception.reason = response.reason + ": " + exception.reason
