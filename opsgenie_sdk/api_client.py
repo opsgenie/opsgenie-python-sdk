@@ -88,7 +88,7 @@ class ApiClient(object):
             self.default_headers[header_name] = header_value
         self.cookie = cookie
         # Set default User-Agent.
-        self.user_agent = 'opsgenie-sdk-python-2.1.3'
+        self.user_agent = 'opsgenie-sdk-python-2.1.4'
 
         # init metric publishers
         self.http_metric_publisher = self.rest_client.http_metric

@@ -230,9 +230,10 @@ def build_exception(response):
         429: ApiException(reason="Throttling"),
         500: ServerErrorException(reason="Internal Server Error"),
         501: ServerErrorException(reason="Not Implemented"),
+        502: ServerErrorException(reason="Bad Gateway"),
         503: ServerErrorException(reason="Back-end servers are at capacity"),
-        -100: ApiException()
-    }.get(http_error_code, -100)
+        504: ServerErrorException(reason="Gateway Timeout")
+    }.get(http_error_code, ApiException(reason="API Encountered a Problem"))
 
     exception.status = response.status
     exception.reason = response.reason + ": " + exception.reason
