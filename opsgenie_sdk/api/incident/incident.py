@@ -46,7 +46,8 @@ class Incident(object):
         'responders': 'list[Responder]',
         'owner_team': 'str',
         'extra_properties': 'dict(str, str)',
-        'request_id': 'str'
+        'request_id': 'str',
+        'impacted_services': 'list[str]'
     }
 
     attribute_map = {
@@ -64,10 +65,11 @@ class Incident(object):
         'responders': 'responders',
         'owner_team': 'ownerTeam',
         'extra_properties': 'extraProperties',
-        'request_id': 'requestId'
+        'request_id': 'requestId',
+        'impacted_services': 'impactedServices'
     }
 
-    def __init__(self, id=None, tiny_id=None, message=None, status=None, is_seen=None, tags=None, created_at=None, updated_at=None, source=None, owner=None, priority=None, responders=None, owner_team=None, extra_properties=None, request_id=None):  # noqa: E501
+    def __init__(self, id=None, tiny_id=None, message=None, status=None, is_seen=None, tags=None, created_at=None, updated_at=None, source=None, owner=None, priority=None, responders=None, owner_team=None, extra_properties=None, request_id=None, impacted_services=None):  # noqa: E501
         """Incident - a model defined in OpenAPI"""  # noqa: E501
 
         self._id = None
@@ -85,6 +87,7 @@ class Incident(object):
         self._owner_team = None
         self._extra_properties = None
         self._request_id = None
+        self._impacted_services = None
         self.discriminator = None
 
         self.id = id
@@ -116,6 +119,8 @@ class Incident(object):
             self.extra_properties = extra_properties
         if request_id is not None:
             self.request_id = request_id
+        if impacted_services is not None:
+            self.impacted_services = impacted_services
 
     @property
     def id(self):
@@ -435,6 +440,28 @@ class Incident(object):
         """
 
         self._request_id = request_id
+
+        #
+    @property
+    def impacted_services(self):
+        """Gets the impacted services of this Incident.  # noqa: E501
+
+
+        :return: The impacted services of this Incident.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._impacted_services
+
+    @impacted_services.setter
+    def impacted_services(self, impacted_services):
+        """Sets the impacted services of this Incident.
+
+
+        :param impacted_services: The impacted services of this Incident.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._impacted_services = impacted_services
 
     def to_dict(self):
         """Returns the model properties as a dict"""
